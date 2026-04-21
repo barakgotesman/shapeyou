@@ -66,29 +66,12 @@ export function ResultScreen() {
 
         <div className="w-full h-px bg-brand-muted my-6" />
 
-        {/* Action row: edit name → step 1, edit traits → step 2, share copies URL */}
-        <div className="flex gap-3 w-full">
-          <Button
-            variant="outline"
-            className="flex-1 border-brand-secondary text-brand-primary rounded-xl"
-            onClick={() => navigate("/create")}
-          >
-            ערוך שם
-          </Button>
-          <Button
-            variant="outline"
-            className="flex-1 border-brand-secondary text-brand-primary rounded-xl"
-            onClick={() => navigate("/create?step=traits")}
-          >
-            ערוך תכונות
-          </Button>
-          <Button
-            className="flex-1 rounded-xl font-semibold"
-            onClick={handleShare}
-          >
-            {copied ? "הועתק ✓" : "שתף ✦"}
-          </Button>
-        </div>
+        <Button
+          className="w-full rounded-xl font-semibold"
+          onClick={handleShare}
+        >
+          {copied ? "הועתק ✓" : "שתף ✦"}
+        </Button>
       </div>
     </div>
   );
