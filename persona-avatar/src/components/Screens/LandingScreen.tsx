@@ -90,14 +90,15 @@ export function LandingScreen() {
       <div className="relative z-10 hidden lg:flex min-h-screen" dir="ltr">
 
         {/* Left: 3-column vertical avatar waterfall */}
-        <div className="flex-1 flex gap-4 px-8 py-8 overflow-hidden" style={{ maxHeight: "100vh" }}>
+        {/* pt-16 clears the fixed navbar height */}
+        <div className="flex-1 flex gap-4 px-8 pt-16 pb-8 overflow-hidden" style={{ maxHeight: "100vh" }}>
           <AvatarColumn items={COL_A} direction="up"   duration={18} />
           <AvatarColumn items={COL_B} direction="down" duration={22} />
           <AvatarColumn items={COL_C} direction="up"   duration={20} />
         </div>
 
         {/* Right: hero + card */}
-        <div className="flex flex-col items-center justify-center px-10 py-12 w-[460px] shrink-0 gap-8" dir="rtl">
+        <div className="flex flex-col items-center justify-center px-10 pt-16 pb-12 w-[460px] shrink-0 gap-8" dir="rtl">
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
               style={{ backgroundColor: "rgba(252,211,77,0.15)", color: "#FCD34D", border: "1px solid rgba(252,211,77,0.3)" }}>
