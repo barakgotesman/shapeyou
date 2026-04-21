@@ -1,9 +1,10 @@
-// Firebase init + Firestore helpers.
+// Firebase init + Firestore + Auth helpers.
 // All credentials come from .env.local (never commit that file).
 // Firestore collection: "avatars" — one doc per generated avatar.
 
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDoc, doc, updateDoc, increment, arrayUnion, serverTimestamp } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
 import type { Traits, AvatarConfig } from "@/lib/avatar";
 
 const firebaseConfig = {
@@ -17,6 +18,24 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+// Auth instance — shared across the app via AuthContext
+export const auth = getAuth(app);
+
+// Google provider — we only request basic profile + email scopes (default)
+const googleProvider = new GoogleAuthProvider();
+
+// Opens the Google sign-in popup and returns the signed-in user.
+// Using popup (vs redirect) so the user stays on the same page after sign-in.
+export async function signInWithGoogle() {
+  const result = await signInWithPopup(auth, googleProvider);
+  return result.user;
+}
+
+// Signs the current user out of Firebase Auth.
+export async function signOut() {
+  await firebaseSignOut(auth);
+}
 
 // Shape of a saved avatar document in Firestore
 export type AvatarDoc = {

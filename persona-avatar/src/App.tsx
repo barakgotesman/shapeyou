@@ -2,6 +2,7 @@ import { Routes, Route, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { AvatarProvider } from "@/context/AvatarContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { LandingScreen } from "@/components/Screens/LandingScreen";
 import { NameInputScreen } from "@/components/Screens/NameInputScreen";
 import { TraitsScreen } from "@/components/Screens/TraitsScreen";
@@ -17,6 +18,9 @@ function CreateRoute() {
 
 export default function App() {
   return (
+    // AuthProvider wraps everything so any screen can call useAuth()
+    // AvatarProvider sits inside so it can read auth state in the future if needed
+    <AuthProvider>
     <AvatarProvider>
       <Navbar />
       <Routes>
@@ -29,5 +33,6 @@ export default function App() {
       <Toaster />
       <DevPreview />
     </AvatarProvider>
+    </AuthProvider>
   );
 }
