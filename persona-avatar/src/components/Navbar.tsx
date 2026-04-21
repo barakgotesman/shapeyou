@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export function Navbar() {
@@ -22,16 +22,26 @@ export function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-md border-b border-brand-muted flex items-center justify-between px-6" dir="rtl">
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-md border-b border-brand-muted flex items-center justify-between px-6">
 
-      {/* Right side — nav links */}
-      <div className="flex items-center gap-6">
-        <a
-          href="/leaderboard"
+      {/* Left side — logo */}
+      <Link to="/" className="flex items-center gap-2.5 select-none">
+        <ShapeYouLogo />
+        <span className="text-lg font-bold text-brand-dark tracking-tight">
+          Shape<span className="text-brand-primary">You</span>
+        </span>
+      </Link>
+
+      {/* Right side — nav links + user area */}
+      <div className="flex items-center gap-5" dir="rtl">
+
+        {/* Nav links — always visible */}
+        <Link
+          to="/leaderboard"
           className="text-sm font-semibold text-brand-primary hover:underline underline-offset-4 transition-colors"
         >
           האהובים ביותר
-        </a>
+        </Link>
 
         {/* "השייפים שלי" — hidden while Firebase resolves initial auth state */}
         {!loading && (
@@ -42,16 +52,12 @@ export function Navbar() {
             השייפים שלי
           </button>
         )}
-      </div>
 
-      {/* Left side — logo + user profile area */}
-      <div className="flex items-center gap-4">
-
-        {/* User area: show photo + sign-out when signed in, or sign-in button when not */}
+        {/* User area: photo + sign-out when signed in, sign-in button when not */}
         {!loading && (
           user ? (
             <div className="flex items-center gap-2">
-              {/* Google profile photo — falls back to initials circle if no photo */}
+              {/* Google profile photo — falls back to initials if no photo */}
               {user.photoURL ? (
                 <img
                   src={user.photoURL}
@@ -77,19 +83,11 @@ export function Navbar() {
               onClick={signIn}
               className="flex items-center gap-1.5 text-sm font-semibold text-brand-primary border border-brand-primary rounded-full px-3 py-1 hover:bg-brand-primary hover:text-white transition-colors"
             >
-              {/* Google "G" icon */}
               <GoogleIcon />
               התחבר
             </button>
           )
         )}
-
-        <a href="/" className="flex items-center gap-2.5 select-none">
-          <span className="text-lg font-bold text-brand-dark tracking-tight">
-            Shape<span className="text-brand-primary">You</span>
-          </span>
-          <ShapeYouLogo />
-        </a>
       </div>
 
     </header>
