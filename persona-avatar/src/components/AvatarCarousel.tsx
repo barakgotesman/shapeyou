@@ -32,7 +32,6 @@ const SAMPLES = SAMPLE_PERSONAS.map(p => ({
   config: buildAvatarConfig(p.name, p.traits),
 }));
 
-// Triple the slides so Swiper always has enough for loop mode with slidesPerView="auto"
 const SLIDES = [...SAMPLES, ...SAMPLES, ...SAMPLES];
 
 export function AvatarCarousel() {
@@ -42,26 +41,27 @@ export function AvatarCarousel() {
         כמה מהאווטארים שנוצרו
       </p>
 
-      <Swiper
-        modules={[Autoplay, FreeMode]}
-        freeMode
-        loop
-        dir="ltr"
-        slidesPerView="auto"
-        spaceBetween={6}
-        autoplay={{ delay: 0, disableOnInteraction: false }}
-        speed={3000}
-        style={{ width: "100%" }}
-      >
-        {SLIDES.map(({ name, config }, i) => (
-          <SwiperSlide key={`${name}-${i}`} style={{ width: "auto" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 82 }}>
-              <AvatarDisplay config={config} size={68} static />
-              <span style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 500, lineHeight: 1 }}>{name}</span>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <div dir="ltr">
+        <Swiper
+          modules={[Autoplay, FreeMode]}
+          freeMode={{ enabled: true, momentum: false }}
+          loop
+          slidesPerView="auto"
+          spaceBetween={6}
+          autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: false }}
+          speed={3000}
+          style={{ width: "100%" }}
+        >
+          {SLIDES.map(({ name, config }, i) => (
+            <SwiperSlide key={`${name}-${i}`} style={{ width: "auto" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 82 }}>
+                <AvatarDisplay config={config} size={68} static />
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 500, lineHeight: 1 }}>{name}</span>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </div>
   );
 }
