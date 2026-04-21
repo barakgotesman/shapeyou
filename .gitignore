@@ -7,6 +7,9 @@ Shapeyou_spec.md
 CLAUDE.md
 README.md
 
+# Dev/test scripts (local only)
+seed-likes.js
+
 # Firebase local cache
 .firebase/
 

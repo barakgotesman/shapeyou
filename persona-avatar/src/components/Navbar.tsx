@@ -7,6 +7,13 @@ export function Navbar() {
           Shape<span className="text-brand-primary">You</span>
         </span>
       </a>
+      <a
+        href="/leaderboard"
+        className="text-sm font-semibold text-brand-primary hover:underline underline-offset-4 transition-colors"
+        dir="rtl"
+      >
+        האהובים ביותר
+      </a>
     </header>
   );
 }
