@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { ToastProps } from "./toast";
 
-type ToastInput = Pick<ToastProps, "variant"> & {
+type ToastInput = Pick<ToastProps, "variant" | "className"> & {
   title?: React.ReactNode;
   description?: React.ReactNode;
 };

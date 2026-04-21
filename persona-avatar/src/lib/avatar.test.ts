@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildAvatarConfig, hashSeed } from "./avatar";
 import type { Traits } from "./avatar";
 
-const base: Traits = { extrovert: 50, creative: 50, calm: 50, funny: 50, social: 50 };
+const base: Traits = { extrovert: 50, creative: 50, calm: 50, funny: 50, social: 50, gender: "other" };
 
 describe("hashSeed", () => {
   it("same name + traits → same seed", () => {

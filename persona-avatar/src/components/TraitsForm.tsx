@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { buildAvatarConfig } from "@/lib/avatar";
 import type { Traits, Gender } from "@/lib/avatar";
-import { cn } from "@/lib/utils";
 
 const TRAIT_LABELS: { key: keyof Omit<Traits, "gender">; lo: string; hi: string; label: string }[] = [
   { key: "extrovert", lo: "מופנם",     hi: "מוחצן",  label: "אנרגיה"    },

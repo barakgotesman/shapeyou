@@ -1,6 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, FreeMode } from "swiper/modules";
-import "swiper/css";
+import "swiper/swiper.css";
 
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { buildAvatarConfig } from "@/lib/avatar";
@@ -46,7 +46,6 @@ export function AvatarCarousel() {
         modules={[Autoplay, FreeMode]}
         freeMode
         loop
-        loopedSlides={SAMPLES.length}
         dir="ltr"
         slidesPerView="auto"
         spaceBetween={6}
