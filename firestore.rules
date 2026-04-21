@@ -2,12 +2,35 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /avatars/{avatarId} {
+      // Anyone can read avatars — needed for share links and leaderboard
       allow read: if true;
+
+      // Anyone can create an avatar (signed in or not).
+      // ownerUid must match the requester's uid if provided, or be null for anonymous.
+      // name must be a string between 2–20 characters.
       allow create: if request.resource.data.name is string
                     && request.resource.data.name.size() >= 2
-                    && request.resource.data.name.size() <= 20;
+                    && request.resource.data.name.size() <= 20
+                    && (
+                      request.resource.data.ownerUid == null
+                      || request.resource.data.ownerUid == request.auth.uid
+                    );
+
+      // Two separate update paths:
+
+      // 1. Like update — anyone can like, but only likes and likedIPs may change,
+      //    and likes must increment by exactly 1 (prevents bulk-liking)
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedIPs'])
                     && request.resource.data.likes == resource.data.likes + 1;
+
+      // 2. Owner edit — only the signed-in user who owns this avatar can edit
+      //    content fields (name, traits, config, description)
+      allow update: if request.auth != null
+                    && request.auth.uid == resource.data.ownerUid
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['name', 'traits', 'config', 'description']);
+
+      // Deletion is never allowed from the client
       allow delete: if false;
     }
   }

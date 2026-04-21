@@ -5,10 +5,12 @@ import { useAvatarContext } from "@/context/AvatarContext";
 import { buildAvatarConfig } from "@/lib/avatar";
 import { generateDescription } from "@/lib/description";
 import { saveAvatar } from "@/lib/firebase";
+import { useAuth } from "@/context/AuthContext";
 import { PageBackground } from "@/components/PageBackground";
 
 export function TraitsScreen() {
   const { name, traits, setName, setTraits, setAvatarId } = useAvatarContext();
+  const { user } = useAuth();
   const navigate = useNavigate();
   // Prevents double-submit while Firestore write is in flight
   const [saving, setSaving] = useState(false);
@@ -20,7 +22,10 @@ export function TraitsScreen() {
       // The shared view uses the stored config directly — no need to rebuild on load.
       const config = buildAvatarConfig(name, traits);
       const description = generateDescription(name, traits);
-      const id = await saveAvatar({ name, traits, config, description });
+      // Store the signed-in user's uid so they can edit this avatar later.
+      // null means the avatar was created anonymously — no edit access.
+      const ownerUid = user?.uid ?? null;
+      const id = await saveAvatar({ name, traits, config, description, ownerUid });
       setAvatarId(id);
       // Pass the Firestore ID in the URL so ResultScreen can construct the correct share link
       navigate(`/result?id=${id}`);

@@ -46,10 +46,12 @@ export type AvatarDoc = {
   description: string;
   likes: number;
   likedIPs: string[];
+  // null when the avatar was created without signing in
+  ownerUid: string | null;
 };
 
 // Saves a new avatar to Firestore and returns the doc ID.
-// Called from TraitsScreen when the user clicks "Generate".
+// ownerUid is the Firebase Auth uid of the signed-in user, or null if anonymous.
 export async function saveAvatar(data: Omit<AvatarDoc, "id" | "likes" | "likedIPs">): Promise<string> {
   const ref = await addDoc(collection(db, "avatars"), {
     ...data,
