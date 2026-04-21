@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes marquee-up {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+@keyframes marquee-down {
+  0%   { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+/* ── Brand utility classes ──────────────────────────────────────────────────
+   Defined explicitly here so they are always available regardless of Tailwind
+   JIT scanning. These mirror the tailwind.config.ts brand tokens exactly.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Backgrounds */
+  .bg-brand-primary   { background-color: #6C63FF; }
+  .bg-brand-secondary { background-color: #A78BFA; }
+  .bg-brand-highlight { background-color: #FCD34D; }
+  .bg-brand-dark      { background-color: #1F1B4E; }
+  .bg-brand-surface   { background-color: #F5F3FF; }
+  .bg-brand-muted     { background-color: #EDE9FE; }
+
+  /* Text */
+  .text-brand-primary   { color: #6C63FF; }
+  .text-brand-secondary { color: #A78BFA; }
+  .text-brand-highlight { color: #FCD34D; }
+  .text-brand-dark      { color: #1F1B4E; }
+
+  /* Borders */
+  .border-brand-primary   { border-color: #6C63FF; }
+  .border-brand-secondary { border-color: #A78BFA; }
+  .border-brand-muted     { border-color: #EDE9FE; }
+
+  /* Hover backgrounds */
+  .hover\:bg-brand-primary:hover { background-color: #6C63FF; }
+  .hover\:bg-brand-muted:hover   { background-color: #EDE9FE; }
+  .hover\:text-brand-primary:hover { color: #6C63FF; }
+
+  /* Gradient from/via/to stops */
+  .from-brand-dark {
+    --tw-gradient-from: #1F1B4E var(--tw-gradient-from-position);
+    --tw-gradient-to: #1F1B4E00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  .from-brand-primary {
+    --tw-gradient-from: #6C63FF var(--tw-gradient-from-position);
+    --tw-gradient-to: #6C63FF00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  .from-brand-secondary {
+    --tw-gradient-from: #A78BFA var(--tw-gradient-from-position);
+    --tw-gradient-to: #A78BFA00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  .from-brand-surface {
+    --tw-gradient-from: #F5F3FF var(--tw-gradient-from-position);
+    --tw-gradient-to: #F5F3FF00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  .via-brand-primary {
+    --tw-gradient-to: #6C63FF00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), #6C63FF var(--tw-gradient-via-position), var(--tw-gradient-to);
+  }
+  .via-brand-secondary {
+    --tw-gradient-to: #A78BFA00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), #A78BFA var(--tw-gradient-via-position), var(--tw-gradient-to);
+  }
+  .via-brand-highlight {
+    --tw-gradient-to: #FCD34D00 var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), #FCD34D var(--tw-gradient-via-position), var(--tw-gradient-to);
+  }
+  .to-brand-secondary {
+    --tw-gradient-to: #A78BFA var(--tw-gradient-to-position);
+  }
+  .to-brand-primary {
+    --tw-gradient-to: #6C63FF var(--tw-gradient-to-position);
+  }
+  .to-brand-muted {
+    --tw-gradient-to: #EDE9FE var(--tw-gradient-to-position);
+  }
+}
+
+@layer base {
+  :root {
+    /* ShapeYou brand tokens */
+    --brand-primary:   #6C63FF;
+    --brand-secondary: #A78BFA;
+    --brand-highlight: #FCD34D;
+    --brand-dark:      #1F1B4E;
+    --brand-surface:   #F5F3FF;
+    --brand-muted:     #EDE9FE;
+
+    /* shadcn/ui tokens — mapped to brand palette */
+    --background:             245 243 255;   /* brand-surface */
+    --foreground:             31  27  78;    /* brand-dark    */
+    --card:                   255 255 255;
+    --card-foreground:        31  27  78;
+    --primary:                245 243 255;   /* overridden inline via bg-brand-primary */
+    --primary-foreground:     255 255 255;
+    --secondary:              237 233 254;   /* brand-muted   */
+    --secondary-foreground:   31  27  78;
+    --muted:                  237 233 254;
+    --muted-foreground:       107 99  164;
+    --accent:                 167 139 250;   /* brand-secondary */
+    --accent-foreground:      31  27  78;
+    --destructive:            239 68  68;
+    --destructive-foreground: 255 255 255;
+    --border:                 221 214 254;
+    --input:                  221 214 254;
+    --ring:                   108 99  255;   /* brand-primary */
+    --radius:                 0.75rem;
+  }
+}
