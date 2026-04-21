@@ -3,7 +3,7 @@
 // Firestore collection: "avatars" — one doc per generated avatar.
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDoc, doc, updateDoc, increment, arrayUnion, serverTimestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDoc, getDocs, doc, updateDoc, increment, arrayUnion, serverTimestamp, query, where, orderBy } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
 import type { Traits, AvatarConfig } from "@/lib/avatar";
 
@@ -77,4 +77,22 @@ export async function loadAvatar(id: string): Promise<AvatarDoc | null> {
   if (!snap.exists()) return null;
   const data = snap.data() as Omit<AvatarDoc, "id">;
   return { id: snap.id, likes: 0, likedIPs: [], ...data };
+}
+
+// Loads all avatars owned by a specific user, sorted newest first.
+// Called from MyAvatarsScreen after the user signs in.
+export async function loadMyAvatars(uid: string): Promise<AvatarDoc[]> {
+  const snap = await getDocs(
+    query(
+      collection(db, "avatars"),
+      where("ownerUid", "==", uid),
+      orderBy("createdAt", "desc")
+    )
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    likes: 0,
+    likedIPs: [],
+    ...(d.data() as Omit<AvatarDoc, "id">),
+  }));
 }

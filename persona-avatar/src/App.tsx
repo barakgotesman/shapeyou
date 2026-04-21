@@ -10,6 +10,7 @@ import { DevPreview } from "@/components/DevPreview";
 import { ResultScreen } from "@/components/Screens/ResultScreen";
 import { SharedAvatarScreen } from "@/components/Screens/SharedAvatarScreen";
 import { LeaderboardScreen } from "@/components/Screens/LeaderboardScreen";
+import { MyAvatarsScreen } from "@/components/Screens/MyAvatarsScreen";
 
 function CreateRoute() {
   const [params] = useSearchParams();
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/result" element={<ResultScreen />} />
         <Route path="/avatar/:id" element={<SharedAvatarScreen />} />
         <Route path="/leaderboard" element={<LeaderboardScreen />} />
+        <Route path="/my-avatars" element={<MyAvatarsScreen />} />
       </Routes>
       <Toaster />
       <DevPreview />
