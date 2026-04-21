@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAvatarContext } from "@/context/AvatarContext";
+import { useAuth } from "@/context/AuthContext";
 
 export function NameInputScreen() {
   const { name, setName } = useAvatarContext();
+  const { user, loading: authLoading, signIn } = useAuth();
   const [error, setError] = useState("");
+  const [dismissed, setDismissed] = useState(false);
   const navigate = useNavigate();
 
   const handleContinue = () => {
@@ -54,6 +57,30 @@ export function NameInputScreen() {
           />
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
+
+        {/* Sign-in nudge — shown only when not signed in and not dismissed */}
+        {!authLoading && !user && !dismissed && (
+          <div className="flex items-start gap-3 bg-brand-primary/8 border border-brand-primary/20 rounded-xl px-4 py-3 text-right" dir="rtl">
+            <div className="flex-1 space-y-1">
+              <p className="text-xs font-semibold text-brand-primary">רוצה לשמור ולערוך את האווטאר שלך?</p>
+              <p className="text-xs text-gray-400">התחבר עם Google כדי שנשמור אותו עבורך ותוכל לערוך אותו בעתיד.</p>
+              <button
+                onClick={signIn}
+                className="text-xs font-bold text-brand-primary underline underline-offset-2 hover:opacity-70 transition-opacity mt-0.5"
+              >
+                התחבר עם Google ←
+              </button>
+            </div>
+            {/* Dismiss X */}
+            <button
+              onClick={() => setDismissed(true)}
+              className="text-gray-300 hover:text-gray-500 transition-colors text-base leading-none mt-0.5"
+              aria-label="סגור"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* default variant = bg-brand-primary text-white */}
         <Button size="lg" className="w-full" onClick={handleContinue}>

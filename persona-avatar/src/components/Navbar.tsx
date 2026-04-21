@@ -43,8 +43,8 @@ export function Navbar() {
           האהובים ביותר
         </Link>
 
-        {/* "השייפים שלי" — hidden while Firebase resolves initial auth state */}
-        {!loading && (
+        {/* "השייפים שלי" — only visible when signed in */}
+        {!loading && user && (
           <button
             onClick={handleMyAvatars}
             className="text-sm font-semibold text-brand-primary hover:underline underline-offset-4 transition-colors"
