@@ -4,6 +4,11 @@ Shapeyou_spec.md
 
 # Claude Code local files
 .claude/
+CLAUDE.md
+README.md
+
+# Firebase local cache
+.firebase/
 
 # Node.js
 node_modules/
