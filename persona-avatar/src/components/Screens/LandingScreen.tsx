@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { AvatarCarousel } from "@/components/AvatarCarousel";
@@ -87,8 +88,9 @@ export function LandingScreen() {
 
       {/* ── Desktop: two-column layout ── */}
       {/* dir=ltr so flex order matches visual left/right regardless of RTL html */}
-      {/* pt-16 offsets the fixed navbar so nothing is hidden behind it */}
-      <div className="relative z-10 hidden lg:flex h-screen pt-16" dir="ltr">
+      {/* Desktop wrapper: full screen height, flex column so footer sits at the bottom */}
+      <div className="relative z-10 hidden lg:flex flex-col h-screen pt-16">
+      <div className="flex flex-1 overflow-hidden" dir="ltr">
 
         {/* Left: 3-column vertical avatar waterfall */}
         <div className="flex-1 flex gap-4 px-8 py-8 overflow-hidden">
@@ -140,6 +142,9 @@ export function LandingScreen() {
           </div>
         </div>
       </div>
+      {/* Footer pinned inside the desktop h-screen container */}
+      <Footer force />
+      </div>
 
       {/* ── Mobile: stacked layout ── */}
       <div className="relative z-10 flex flex-col items-center lg:hidden px-4 pt-28 pb-0 gap-8">
@@ -187,6 +192,7 @@ export function LandingScreen() {
         <div className="w-full mt-0">
           <AvatarCarousel />
         </div>
+        <Footer force />
       </div>
 
     </div>

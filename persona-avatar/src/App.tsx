@@ -11,6 +11,7 @@ import { ResultScreen } from "@/components/Screens/ResultScreen";
 import { SharedAvatarScreen } from "@/components/Screens/SharedAvatarScreen";
 import { LeaderboardScreen } from "@/components/Screens/LeaderboardScreen";
 import { MyAvatarsScreen } from "@/components/Screens/MyAvatarsScreen";
+import { Footer } from "@/components/Footer";
 
 function CreateRoute() {
   const [params] = useSearchParams();
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/leaderboard" element={<LeaderboardScreen />} />
         <Route path="/my-avatars" element={<MyAvatarsScreen />} />
       </Routes>
+      <Footer />
       <Toaster />
       <DevPreview />
     </AvatarProvider>
