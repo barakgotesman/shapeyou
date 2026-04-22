@@ -1,14 +1,31 @@
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export function Navbar() {
   const { user, signIn, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // When the user clicks "השייפים שלי":
-  // - If signed in → go straight to their avatars page
-  // - If not signed in → trigger Google popup first, then navigate on success
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => { setMenuOpen(false); }, [navigate]);
+
   const handleMyAvatars = async () => {
+    setMenuOpen(false);
+    setDropdownOpen(false);
     if (user) {
       navigate("/my-avatars");
     } else {
@@ -16,26 +33,42 @@ export function Navbar() {
         await signIn();
         navigate("/my-avatars");
       } catch {
-        // User closed the popup — do nothing
+        // user closed popup
       }
     }
   };
 
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-md border-b border-brand-muted flex items-center justify-between px-6">
+  const handleSignOut = async () => {
+    setDropdownOpen(false);
+    setMenuOpen(false);
+    await signOut();
+  };
 
-      {/* Left side — logo */}
-      <Link to="/" className="flex items-center gap-2.5 select-none">
+  const Avatar = () => user?.photoURL ? (
+    <img
+      src={user.photoURL}
+      alt={user.displayName ?? "פרופיל"}
+      className="w-8 h-8 rounded-full border-2 border-brand-primary object-cover"
+    />
+  ) : (
+    <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-white text-xs font-bold select-none">
+      {(user?.displayName ?? user?.email ?? "?")[0].toUpperCase()}
+    </div>
+  );
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-md border-b border-brand-muted flex items-center justify-between px-4 sm:px-6">
+
+      {/* Logo */}
+      <Link to="/" className="flex items-center gap-2.5 select-none shrink-0">
         <ShapeYouLogo />
         <span className="text-lg font-bold text-brand-dark tracking-tight">
           Shape<span className="text-brand-primary">You</span>
         </span>
       </Link>
 
-      {/* Right side — nav links + user area */}
-      <div className="flex items-center gap-5" dir="rtl">
-
-        {/* Nav links — always visible */}
+      {/* ── Desktop nav (md+) ── */}
+      <div className="hidden md:flex items-center gap-5" dir="rtl">
         <Link
           to="/leaderboard"
           className="text-sm font-semibold text-brand-primary hover:underline underline-offset-4 transition-colors"
@@ -43,41 +76,52 @@ export function Navbar() {
           האהובים ביותר
         </Link>
 
-        {/* "השייפים שלי" — only visible when signed in */}
-        {!loading && user && (
-          <button
-            onClick={handleMyAvatars}
-            className="text-sm font-semibold text-brand-primary hover:underline underline-offset-4 transition-colors"
-          >
-            השייפים שלי
-          </button>
-        )}
-
-        {/* User area: photo + sign-out when signed in, sign-in button when not */}
         {!loading && (
           user ? (
-            <div className="flex items-center gap-2">
-              {/* Google profile photo — falls back to initials if no photo */}
-              {user.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName ?? "פרופיל"}
-                  className="w-8 h-8 rounded-full border-2 border-brand-primary object-cover"
-                  title={user.displayName ?? user.email ?? ""}
-                />
-              ) : (
-                // Initials fallback when Google account has no photo
-                <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-white text-xs font-bold">
-                  {(user.displayName ?? user.email ?? "?")[0].toUpperCase()}
-                </div>
-              )}
-              <button
-                onClick={signOut}
-                className="text-xs text-gray-400 hover:text-brand-primary transition-colors"
-              >
-                התנתק
-              </button>
-            </div>
+            <>
+              {/* Profile photo → dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(o => !o)}
+                  className="flex items-center gap-2 rounded-full focus:outline-none"
+                  aria-label="תפריט משתמש"
+                >
+                  <Avatar />
+                  <svg
+                    width="12" height="12" viewBox="0 0 12 12" fill="none"
+                    className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                  >
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                {/* Dropdown */}
+                {dropdownOpen && (
+                  <div
+                    className="absolute left-0 top-full mt-2 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50"
+                    dir="rtl"
+                  >
+                    {user.displayName && (
+                      <p className="px-4 py-2 text-xs text-gray-400 border-b border-gray-100 truncate">
+                        {user.displayName}
+                      </p>
+                    )}
+                    <button
+                      onClick={handleMyAvatars}
+                      className="w-full text-right px-4 py-2.5 text-sm text-brand-dark hover:bg-gray-50 transition-colors"
+                    >
+                      השייפים שלי
+                    </button>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-right px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      התנתק
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
             <button
               onClick={signIn}
@@ -90,11 +134,75 @@ export function Navbar() {
         )}
       </div>
 
+      {/* ── Mobile right side (< md) ── */}
+      <div className="flex md:hidden items-center gap-3">
+        {/* Show user photo on mobile even before hamburger */}
+        {!loading && user && (
+          <button onClick={() => setMenuOpen(o => !o)} className="rounded-full">
+            <Avatar />
+          </button>
+        )}
+
+        {/* Hamburger */}
+        <button
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label="פתח תפריט"
+          className="flex flex-col justify-center items-center w-8 h-8 gap-1.5"
+        >
+          <span className={`block h-0.5 w-6 bg-brand-dark rounded transition-all duration-200 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
+          <span className={`block h-0.5 w-6 bg-brand-dark rounded transition-all duration-200 ${menuOpen ? "opacity-0" : ""}`} />
+          <span className={`block h-0.5 w-6 bg-brand-dark rounded transition-all duration-200 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+        </button>
+      </div>
+
+      {/* ── Mobile dropdown menu ── */}
+      {menuOpen && (
+        <div
+          className="absolute top-16 left-0 right-0 bg-white border-b border-brand-muted shadow-lg flex flex-col py-2 md:hidden z-50"
+          dir="rtl"
+        >
+          {!loading && user?.displayName && (
+            <p className="px-5 py-2 text-xs text-gray-400 border-b border-gray-100">{user.displayName}</p>
+          )}
+          <Link
+            to="/leaderboard"
+            onClick={() => setMenuOpen(false)}
+            className="px-5 py-3 text-sm font-semibold text-brand-primary hover:bg-gray-50 transition-colors"
+          >
+            האהובים ביותר
+          </Link>
+          {!loading && (
+            user ? (
+              <>
+                <button
+                  onClick={handleMyAvatars}
+                  className="text-right px-5 py-3 text-sm font-semibold text-brand-dark hover:bg-gray-50 transition-colors"
+                >
+                  השייפים שלי
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="text-right px-5 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                >
+                  התנתק
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={async () => { setMenuOpen(false); await signIn(); }}
+                className="text-right px-5 py-3 text-sm font-semibold text-brand-primary hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <GoogleIcon />
+                התחבר עם Google
+              </button>
+            )
+          )}
+        </div>
+      )}
     </header>
   );
 }
 
-// Minimal Google "G" colored icon for the sign-in button
 function GoogleIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

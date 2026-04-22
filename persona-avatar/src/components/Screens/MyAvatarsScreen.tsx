@@ -84,7 +84,7 @@ export function MyAvatarsScreen() {
                 className="group flex flex-col items-center bg-white/8 hover:bg-white/15 border border-white/10 hover:border-white/25 rounded-2xl p-4 transition-all duration-200"
               >
                 {/* Avatar preview — static for performance in grid */}
-                <AvatarDisplay config={avatar.config} size={100} static />
+                <AvatarDisplay config={avatar.config} chosenAccessory={avatar.chosenAccessory} size={100} static />
 
                 <p className="font-semibold text-white text-sm mt-2 truncate w-full text-center">
                   {avatar.name}
