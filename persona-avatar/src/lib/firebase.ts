@@ -3,7 +3,7 @@
 // Firestore collection: "avatars" — one doc per generated avatar.
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDoc, getDocs, doc, updateDoc, increment, arrayUnion, serverTimestamp, query, where, orderBy } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDoc, getDocs, doc, updateDoc, increment, arrayUnion, serverTimestamp, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
 import type { Traits, AvatarConfig } from "@/lib/avatar";
 
@@ -48,15 +48,21 @@ export type AvatarDoc = {
   likedIPs: string[];
   // null when the avatar was created without signing in
   ownerUid: string | null;
+  // XP earned — currently 1 per like, reserved for future sources
+  xp: number;
+  // Owner-chosen accessory overrides; null = auto (use trait-generated), [] = none, [...] = these accessories
+  chosenAccessory: string[] | null;
 };
 
 // Saves a new avatar to Firestore and returns the doc ID.
 // ownerUid is the Firebase Auth uid of the signed-in user, or null if anonymous.
-export async function saveAvatar(data: Omit<AvatarDoc, "id" | "likes" | "likedIPs">): Promise<string> {
+export async function saveAvatar(data: Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">): Promise<string> {
   const ref = await addDoc(collection(db, "avatars"), {
     ...data,
     likes: 0,
     likedIPs: [],
+    xp: 0,
+    chosenAccessory: null,
     createdAt: serverTimestamp(),
   });
   return ref.id;
@@ -66,6 +72,29 @@ export async function likeAvatar(id: string, ip: string): Promise<void> {
   await updateDoc(doc(db, "avatars", id), {
     likes: increment(1),
     likedIPs: arrayUnion(ip),
+    xp: increment(1),
+  });
+}
+
+export async function setChosenAccessory(id: string, accessories: string[] | null): Promise<void> {
+  await updateDoc(doc(db, "avatars", id), { chosenAccessory: accessories });
+}
+
+// Normalize legacy string chosenAccessory to array format
+function normalizeChosen(raw: unknown): string[] | null {
+  if (raw === null || raw === undefined) return null;
+  if (Array.isArray(raw)) return raw as string[];
+  if (typeof raw === "string") return [raw];
+  return null;
+}
+
+// Real-time listener for a single avatar doc — used on the edit screen so XP/likes update live
+export function subscribeAvatar(id: string, onUpdate: (avatar: AvatarDoc) => void): () => void {
+  return onSnapshot(doc(db, "avatars", id), snap => {
+    if (!snap.exists()) return;
+    const raw = snap.data();
+    const data = raw as Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">;
+    onUpdate({ likes: 0, likedIPs: [], xp: 0, ...data, chosenAccessory: normalizeChosen(raw.chosenAccessory), id: snap.id });
   });
 }
 
@@ -75,8 +104,9 @@ export async function likeAvatar(id: string, ip: string): Promise<void> {
 export async function loadAvatar(id: string): Promise<AvatarDoc | null> {
   const snap = await getDoc(doc(db, "avatars", id));
   if (!snap.exists()) return null;
-  const data = snap.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs">;
-  return { likes: 0, likedIPs: [], ...data, id: snap.id };
+  const raw = snap.data();
+  const data = raw as Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">;
+  return { likes: 0, likedIPs: [], xp: 0, ...data, chosenAccessory: normalizeChosen(raw.chosenAccessory), id: snap.id };
 }
 
 // Loads all avatars owned by a specific user, sorted newest first.
@@ -92,7 +122,9 @@ export async function loadMyAvatars(uid: string): Promise<AvatarDoc[]> {
   return snap.docs.map((d) => ({
     likes: 0,
     likedIPs: [],
-    ...(d.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs">),
+    xp: 0,
+    ...(d.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">),
+    chosenAccessory: normalizeChosen(d.data().chosenAccessory),
     id: d.id,
   }));
 }

@@ -26,7 +26,7 @@ export type AvatarConfig = {
   eyeType: "big" | "small" | "almond" | "wide" | "sleepy" | "sharp";
   eyeColor: EyeColor;
   mouthType: "smile" | "neutral" | "smirk" | "grin";
-  accessory: "none" | "glasses" | "hat" | "cowboy-hat" | "beanie" | "crown" | "party-hat" | "headphones" | "flower" | "sunflower" | "rose" | "bow" | "earrings";
+  accessory: "none" | "glasses" | "hat" | "cowboy-hat" | "beanie" | "crown" | "party-hat" | "headphones" | "flower" | "sunflower" | "rose" | "bow" | "earrings" | "sunglasses" | "monocle" | "wizard-hat" | "devil-horns" | "halo" | "laurel-wreath" | "fire-aura" | "angel-wings";
   primaryColor: string;
   accentColor: string;
   backgroundColor: string;
@@ -38,6 +38,26 @@ export type AvatarConfig = {
   beardColor: string;
   personality: Personality;
 };
+
+// Accessories available for free (no XP needed)
+export const FREE_ACCESSORIES: AvatarConfig["accessory"][] = ["glasses"];
+
+// XP thresholds — each tier unlocks more accessories as the avatar earns likes
+export const XP_UNLOCKS: { xp: number; accessories: AvatarConfig["accessory"][] }[] = [
+  { xp: 10,  accessories: ["flower", "bow", "headphones"] },
+  { xp: 30,  accessories: ["hat", "beanie", "rose", "sunflower"] },
+  { xp: 75,  accessories: ["cowboy-hat", "crown", "party-hat", "earrings"] },
+  { xp: 150, accessories: ["sunglasses", "monocle"] },
+  { xp: 300, accessories: ["wizard-hat", "devil-horns"] },
+  { xp: 600, accessories: ["halo", "laurel-wreath"] },
+  { xp: 1000, accessories: ["fire-aura", "angel-wings"] },
+];
+
+// Returns all unlocked accessories (free + earned) for a given XP count
+export function getUnlockedAccessories(xp: number): AvatarConfig["accessory"][] {
+  const earned = XP_UNLOCKS.filter(tier => xp >= tier.xp).flatMap(tier => tier.accessories);
+  return [...FREE_ACCESSORIES, ...earned];
+}
 
 // DJB2-style hash — keeps the same output across JS engines (no BigInt needed)
 export const hashSeed = (name: string, traits: Traits): number => {

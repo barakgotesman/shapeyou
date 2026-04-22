@@ -90,7 +90,7 @@ export function SharedAvatarScreen() {
         </p>
 
         <div className="mt-4">
-          <AvatarDisplay config={avatar.config as AvatarConfig} size={260} />
+          <AvatarDisplay config={avatar.config as AvatarConfig} chosenAccessory={avatar.chosenAccessory} size={260} />
         </div>
 
         <h2 className="text-2xl font-bold text-brand-dark text-center mt-4">{avatar.name}</h2>

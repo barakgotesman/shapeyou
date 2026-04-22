@@ -15,9 +15,18 @@ type Props = {
   size?: number;
   // When true, disables all SVG animations — used in carousel for performance
   static?: boolean;
+  // Owner-chosen accessory overrides — null = use auto, [] = none, [...] = render all
+  chosenAccessory?: string[] | null;
 };
 
-export const AvatarDisplay = ({ config, className = "w-48 h-48", size, static: isStatic = false }: Props) => {
+export const AvatarDisplay = ({ config, className = "w-48 h-48", size, static: isStatic = false, chosenAccessory }: Props) => {
+  // Normalize: null/undefined → auto (trait-generated), string (legacy) → wrap in array, array → use as-is
+  const effectiveAccessories: string[] =
+    chosenAccessory === null || chosenAccessory === undefined
+      ? [config.accessory]
+      : Array.isArray(chosenAccessory)
+      ? chosenAccessory
+      : [chosenAccessory as unknown as string];
   const svgRef = useRef<SVGSVGElement>(null);
   // Unique ID per instance — prevents SVG defs (gradients, clips) from colliding
   // when multiple avatars render on the same page (e.g. carousel)
@@ -118,10 +127,10 @@ export const AvatarDisplay = ({ config, className = "w-48 h-48", size, static: i
             </g>
           )}
 
-          {/* Hat-family accessories rendered separately below for click animation */}
-          {!HAT_VARIANTS.has(config.accessory) && (
-            <Accessory variant={config.accessory} color={config.accentColor} faceShape={config.faceShape} />
-          )}
+          {/* Non-hat accessories rendered inside the float group */}
+          {effectiveAccessories.filter(a => !HAT_VARIANTS.has(a)).map(a => (
+            <Accessory key={a} variant={a} color={config.accentColor} faceShape={config.faceShape} />
+          ))}
 
           {/* Eyelid blink overlay — suppressed in static mode */}
           {!isStatic && <>
@@ -134,9 +143,10 @@ export const AvatarDisplay = ({ config, className = "w-48 h-48", size, static: i
           </>}
         </g>
 
-        {/* Clickable hat-family rendered outside float group for independent animation */}
-        {HAT_VARIANTS.has(config.accessory) && (
+        {/* Hat-family accessories rendered outside float group for independent animation */}
+        {effectiveAccessories.filter(a => HAT_VARIANTS.has(a)).map((a, i) => (
           <g
+            key={a}
             onClick={isStatic ? undefined : handleHatClick}
             style={isStatic ? undefined : { cursor: "pointer" }}
           >
@@ -153,15 +163,15 @@ export const AvatarDisplay = ({ config, className = "w-48 h-48", size, static: i
               style={{
                 transformOrigin: "100px 35px",
                 transformBox: "fill-box",
-                animation: hatAnim
+                animation: hatAnim && i === 0
                   ? "hatJump 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards"
                   : "none",
               }}
             >
-              <Accessory variant={config.accessory} color={config.hatColor} />
+              <Accessory variant={a} color={config.hatColor} />
             </g>
           </g>
-        )}
+        ))}
       </svg>
 
       <style>{`

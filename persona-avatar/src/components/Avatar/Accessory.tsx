@@ -350,5 +350,162 @@ export const Accessory = ({ variant, color, faceShape = "round" }: Props) => {
     );
   }
 
+  // ── SUNGLASSES ────────────────────────────────────────────────────────────
+  if (variant === "sunglasses") {
+    return (
+      <g>
+        <ellipse cx={78} cy={101} rx={16} ry={14} fill="#1a1a1a" opacity={0.88} />
+        <ellipse cx={122} cy={101} rx={16} ry={14} fill="#1a1a1a" opacity={0.88} />
+        <ellipse cx={78} cy={99} rx={13} ry={10} fill="#2a2a2a" opacity={0.6} />
+        <ellipse cx={122} cy={99} rx={13} ry={10} fill="#2a2a2a" opacity={0.6} />
+        {/* Tinted shine */}
+        <ellipse cx={72} cy={95} rx={5} ry={3} fill="#ffffff18" transform="rotate(-20,72,95)" />
+        <ellipse cx={116} cy={95} rx={5} ry={3} fill="#ffffff18" transform="rotate(-20,116,95)" />
+        <ellipse cx={78} cy={101} rx={16} ry={14} fill="none" stroke="#111" strokeWidth={2.5} />
+        <ellipse cx={122} cy={101} rx={16} ry={14} fill="none" stroke="#111" strokeWidth={2.5} />
+        <path d="M94 100 Q100 97 106 100" fill="none" stroke="#111" strokeWidth={2} />
+        <line x1={62} y1={99} x2={50} y2={102} stroke="#111" strokeWidth={2.2} strokeLinecap="round" />
+        <line x1={138} y1={99} x2={150} y2={102} stroke="#111" strokeWidth={2.2} strokeLinecap="round" />
+      </g>
+    );
+  }
+
+  // ── MONOCLE ───────────────────────────────────────────────────────────────
+  if (variant === "monocle") {
+    return (
+      <g>
+        <ellipse cx={122} cy={101} rx={16} ry={15} fill={color} opacity={0.2} />
+        <ellipse cx={122} cy={101} rx={16} ry={15} fill="none" stroke="#C0A060" strokeWidth={3} />
+        <ellipse cx={116} cy={96} rx={5} ry={3} fill="#ffffff30" transform="rotate(-25,116,96)" />
+        {/* Gold chain */}
+        <path d="M136 108 Q142 118 138 130 Q135 140 130 148" fill="none" stroke="#C0A060" strokeWidth={1.5} strokeDasharray="3,3" strokeLinecap="round" />
+        <circle cx={130} cy={150} r={3} fill="#C0A060" />
+        <circle cx={138} cy={100} r={2} fill="#C0A060" />
+      </g>
+    );
+  }
+
+  // ── WIZARD HAT ────────────────────────────────────────────────────────────
+  if (variant === "wizard-hat") {
+    return (
+      <g>
+        {/* Wide brim */}
+        <ellipse cx={100} cy={62} rx={58} ry={10} fill="#00000022" />
+        <ellipse cx={100} cy={60} rx={56} ry={9} fill={color} />
+        {/* Tall cone */}
+        <path d="M82 60 L100 -10 L118 60 Z" fill={color} />
+        <path d="M100 -10 L118 60 Q110 50 100 -10 Z" fill="#00000018" />
+        {/* Stars on cone */}
+        <text x={94} y={30} fontSize={10} fill="#FFD700" textAnchor="middle">★</text>
+        <text x={104} y={48} fontSize={7} fill="#ffffff80" textAnchor="middle">✦</text>
+        <text x={88} y={50} fontSize={6} fill="#ffffff60" textAnchor="middle">✦</text>
+        {/* Moon */}
+        <path d="M104 18 Q110 14 109 20 Q106 26 104 18 Z" fill="#FFD700" opacity={0.9} />
+        {/* Brim highlight */}
+        <ellipse cx={85} cy={56} rx={18} ry={4} fill="#ffffff20" />
+      </g>
+    );
+  }
+
+  // ── DEVIL HORNS ──────────────────────────────────────────────────────────
+  if (variant === "devil-horns") {
+    return (
+      <g>
+        {/* Left horn */}
+        <path d="M68 68 Q56 40 72 24 Q74 44 80 60 Z" fill="#CC2200" />
+        <path d="M72 24 Q74 44 80 60 Q76 44 72 24 Z" fill="#FF4422" opacity={0.5} />
+        {/* Right horn */}
+        <path d="M132 68 Q144 40 128 24 Q126 44 120 60 Z" fill="#CC2200" />
+        <path d="M128 24 Q126 44 120 60 Q124 44 128 24 Z" fill="#FF4422" opacity={0.5} />
+        {/* Horn tips glow */}
+        <circle cx={72} cy={24} r={4} fill="#FF6644" opacity={0.7} />
+        <circle cx={128} cy={24} r={4} fill="#FF6644" opacity={0.7} />
+      </g>
+    );
+  }
+
+  // ── HALO ──────────────────────────────────────────────────────────────────
+  if (variant === "halo") {
+    return (
+      <g>
+        {/* Glow effect */}
+        <ellipse cx={100} cy={18} rx={30} ry={9} fill="#FFD700" opacity={0.25} />
+        {/* Main halo ring */}
+        <ellipse cx={100} cy={18} rx={26} ry={7} fill="none" stroke="#FFD700" strokeWidth={5} />
+        <ellipse cx={100} cy={18} rx={26} ry={7} fill="none" stroke="#FFF8DC" strokeWidth={2} opacity={0.7} />
+        {/* Inner shine arc */}
+        <path d="M80 15 Q100 10 120 15" fill="none" stroke="#ffffff70" strokeWidth={2} strokeLinecap="round" />
+      </g>
+    );
+  }
+
+  // ── LAUREL WREATH ─────────────────────────────────────────────────────────
+  if (variant === "laurel-wreath") {
+    const leftLeaves = [
+      { x: 60, y: 56, r: -40 }, { x: 52, y: 48, r: -55 }, { x: 50, y: 38, r: -70 },
+      { x: 54, y: 28, r: -85 }, { x: 62, y: 20, r: -100 },
+    ];
+    const rightLeaves = leftLeaves.map(l => ({ x: 200 - l.x, y: l.y, r: -l.r }));
+    return (
+      <g>
+        {leftLeaves.map((l, i) => (
+          <ellipse key={`ll${i}`} cx={l.x} cy={l.y} rx={9} ry={5} fill="#4CAF50" transform={`rotate(${l.r},${l.x},${l.y})`} opacity={0.9} />
+        ))}
+        {leftLeaves.map((l, i) => (
+          <ellipse key={`lls${i}`} cx={l.x} cy={l.y} rx={9} ry={5} fill="none" stroke="#2E7D32" strokeWidth={0.8} transform={`rotate(${l.r},${l.x},${l.y})`} />
+        ))}
+        {rightLeaves.map((l, i) => (
+          <ellipse key={`rl${i}`} cx={l.x} cy={l.y} rx={9} ry={5} fill="#4CAF50" transform={`rotate(${l.r},${l.x},${l.y})`} opacity={0.9} />
+        ))}
+        {rightLeaves.map((l, i) => (
+          <ellipse key={`rls${i}`} cx={l.x} cy={l.y} rx={9} ry={5} fill="none" stroke="#2E7D32" strokeWidth={0.8} transform={`rotate(${l.r},${l.x},${l.y})`} />
+        ))}
+        {/* Centre berries */}
+        <circle cx={93} cy={18} r={4} fill="#C62828" />
+        <circle cx={100} cy={15} r={4.5} fill="#C62828" />
+        <circle cx={107} cy={18} r={4} fill="#C62828" />
+        <circle cx={93} cy={18} r={2} fill="#EF9A9A" opacity={0.6} />
+        <circle cx={100} cy={15} r={2.5} fill="#EF9A9A" opacity={0.6} />
+        <circle cx={107} cy={18} r={2} fill="#EF9A9A" opacity={0.6} />
+      </g>
+    );
+  }
+
+  // ── FIRE AURA ─────────────────────────────────────────────────────────────
+  if (variant === "fire-aura") {
+    return (
+      <g opacity={0.9}>
+        {/* Left flames */}
+        <path d="M38 140 Q30 110 42 88 Q36 104 44 90 Q40 110 50 100 Q44 115 52 108 Q48 122 56 118 Q52 130 42 140 Z" fill="#FF6F00" />
+        <path d="M38 140 Q32 115 44 94 Q42 110 50 100 Q46 118 54 112 Q50 126 42 140 Z" fill="#FFCA28" opacity={0.6} />
+        {/* Right flames */}
+        <path d="M162 140 Q170 110 158 88 Q164 104 156 90 Q160 110 150 100 Q156 115 148 108 Q152 122 144 118 Q148 130 158 140 Z" fill="#FF6F00" />
+        <path d="M162 140 Q168 115 156 94 Q158 110 150 100 Q154 118 146 112 Q150 126 158 140 Z" fill="#FFCA28" opacity={0.6} />
+      </g>
+    );
+  }
+
+  // ── ANGEL WINGS ──────────────────────────────────────────────────────────
+  if (variant === "angel-wings") {
+    return (
+      <g opacity={0.92}>
+        {/* Left wing */}
+        <path d="M58 100 Q20 70 18 110 Q16 140 50 148 Q30 130 38 112 Q44 128 58 130 Q42 118 48 104 Z" fill="white" />
+        <path d="M58 100 Q20 70 18 110 Q16 140 50 148 Q30 130 38 112 Q44 128 58 130 Q42 118 48 104 Z" fill="none" stroke="#DDD" strokeWidth={1} />
+        {/* Left feather detail */}
+        <path d="M30 90 Q36 104 48 104" fill="none" stroke="#EEE" strokeWidth={1.2} strokeLinecap="round" />
+        <path d="M24 102 Q32 116 44 116" fill="none" stroke="#EEE" strokeWidth={1.2} strokeLinecap="round" />
+        <path d="M22 116 Q30 128 42 128" fill="none" stroke="#EEE" strokeWidth={1.2} strokeLinecap="round" />
+        {/* Right wing */}
+        <path d="M142 100 Q180 70 182 110 Q184 140 150 148 Q170 130 162 112 Q156 128 142 130 Q158 118 152 104 Z" fill="white" />
+        <path d="M142 100 Q180 70 182 110 Q184 140 150 148 Q170 130 162 112 Q156 128 142 130 Q158 118 152 104 Z" fill="none" stroke="#DDD" strokeWidth={1} />
+        {/* Right feather detail */}
+        <path d="M170 90 Q164 104 152 104" fill="none" stroke="#EEE" strokeWidth={1.2} strokeLinecap="round" />
+        <path d="M176 102 Q168 116 156 116" fill="none" stroke="#EEE" strokeWidth={1.2} strokeLinecap="round" />
+        <path d="M178 116 Q170 128 158 128" fill="none" stroke="#EEE" strokeWidth={1.2} strokeLinecap="round" />
+      </g>
+    );
+  }
+
   return null;
 };
