@@ -22,7 +22,7 @@ export function LeaderboardScreen() {
   useEffect(() => {
     getDocs(query(collection(db, "avatars"), orderBy("likes", "desc"), limit(10)))
       .then((snap) => {
-        setAvatars(snap.docs.map((d) => ({ id: d.id, likes: 0, likedIPs: [], ...(d.data() as Omit<AvatarDoc, "id">) })));
+        setAvatars(snap.docs.map((d) => ({ likes: 0, likedIPs: [], ...(d.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs">), id: d.id })));
       })
       .finally(() => setLoading(false));
   }, []);

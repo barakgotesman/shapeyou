@@ -75,8 +75,8 @@ export async function likeAvatar(id: string, ip: string): Promise<void> {
 export async function loadAvatar(id: string): Promise<AvatarDoc | null> {
   const snap = await getDoc(doc(db, "avatars", id));
   if (!snap.exists()) return null;
-  const data = snap.data() as Omit<AvatarDoc, "id">;
-  return { id: snap.id, likes: 0, likedIPs: [], ...data };
+  const data = snap.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs">;
+  return { likes: 0, likedIPs: [], ...data, id: snap.id };
 }
 
 // Loads all avatars owned by a specific user, sorted newest first.
@@ -90,9 +90,9 @@ export async function loadMyAvatars(uid: string): Promise<AvatarDoc[]> {
     )
   );
   return snap.docs.map((d) => ({
-    id: d.id,
     likes: 0,
     likedIPs: [],
-    ...(d.data() as Omit<AvatarDoc, "id">),
+    ...(d.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs">),
+    id: d.id,
   }));
 }
