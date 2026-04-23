@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { Button } from "@/components/ui/button";
-import { loadAvatar, likeAvatar } from "@/lib/firebase";
+import { loadAvatar, likeAvatar, awardLikerCoins } from "@/lib/firebase";
 import type { AvatarDoc } from "@/lib/firebase";
 import type { AvatarConfig } from "@/lib/avatar";
 import { PageBackground } from "@/components/PageBackground";
+import { useAuth } from "@/context/AuthContext";
 
 async function fetchHashedIP(): Promise<string | null> {
   try {
@@ -23,11 +24,13 @@ async function fetchHashedIP(): Promise<string | null> {
 export function SharedAvatarScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, refreshUserDoc } = useAuth();
   const [avatar, setAvatar] = useState<AvatarDoc | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [ip, setIp] = useState<string | null>(null);
   const [liking, setLiking] = useState(false);
+  const [coinFlash, setCoinFlash] = useState(0);
 
   useEffect(() => {
     if (!id) { setNotFound(true); setLoading(false); return; }
@@ -47,12 +50,19 @@ export function SharedAvatarScreen() {
   const handleLike = async () => {
     if (!avatar || !id || !ip || hasLiked || liking) return;
     setLiking(true);
-    // Optimistic update
     setAvatar(a => a ? { ...a, likes: a.likes + 1, likedIPs: [...a.likedIPs, ip] } : a);
     try {
       await likeAvatar(id, ip);
+      const isLikingOther = user && avatar.ownerUid && user.uid !== avatar.ownerUid;
+      if (isLikingOther) {
+        const earned = await awardLikerCoins(user.uid);
+        await refreshUserDoc();
+        if (earned > 0) {
+          setCoinFlash(earned);
+          setTimeout(() => setCoinFlash(0), 2000);
+        }
+      }
     } catch {
-      // Revert on failure
       setAvatar(a => a ? { ...a, likes: a.likes - 1, likedIPs: a.likedIPs.filter(i => i !== ip) } : a);
     } finally {
       setLiking(false);
@@ -97,20 +107,28 @@ export function SharedAvatarScreen() {
         <p className="text-sm text-gray-400 italic text-center mt-2">{avatar.description}</p>
 
         {/* Like button */}
-        <button
-          onClick={handleLike}
-          disabled={hasLiked || liking}
-          className="mt-5 flex items-center gap-2 px-5 py-2 rounded-full border transition-all"
-          style={{
-            borderColor: hasLiked ? "#FF6B9D" : "#EDE9FE",
-            background: hasLiked ? "#FFF0F5" : "white",
-            color: hasLiked ? "#FF6B9D" : "#9CA3AF",
-            cursor: hasLiked ? "default" : "pointer",
-          }}
-        >
-          <span style={{ fontSize: 18 }}>{hasLiked ? "❤️" : "🤍"}</span>
-          <span className="text-sm font-semibold">{avatar.likes}</span>
-        </button>
+        <div className="mt-5 flex flex-col items-center gap-1">
+          <button
+            onClick={handleLike}
+            disabled={hasLiked || liking}
+            className="flex items-center gap-2 px-5 py-2 rounded-full border transition-all"
+            style={{
+              borderColor: hasLiked ? "#FF6B9D" : "#EDE9FE",
+              background: hasLiked ? "#FFF0F5" : "white",
+              color: hasLiked ? "#FF6B9D" : "#9CA3AF",
+              cursor: hasLiked ? "default" : "pointer",
+            }}
+          >
+            <span style={{ fontSize: 18 }}>{hasLiked ? "❤️" : "🤍"}</span>
+            <span className="text-sm font-semibold">{avatar.likes}</span>
+          </button>
+          <span
+            className="text-xs font-semibold text-amber-500 transition-all duration-300"
+            style={{ opacity: coinFlash ? 1 : 0, transform: coinFlash ? "translateY(-4px)" : "translateY(0)" }}
+          >
+            +{coinFlash} 🪙
+          </span>
+        </div>
 
         <div className="w-full h-px bg-brand-muted my-6" />
 
