@@ -44,9 +44,9 @@ export function SharedAvatarScreen() {
   const waRef = useRef<HTMLDivElement>(null);
 
   const WA_MESSAGES = [
-    "קלוט את השפיו שלי! 👀",
-    "תעשה לי לייק לשפיו שלי ❤️",
-    "הנה השפיו שיצרתי 🎨",
+    "קלוט את השפיו שלי!",
+    "תעשה לי לייק לשפיו שלי",
+    "הנה השפיו שיצרתי",
   ];
 
   useEffect(() => {
@@ -220,10 +220,10 @@ export function SharedAvatarScreen() {
                   <button
                     key={i}
                     onClick={() => { setSelectedMsg(i); handleWhatsApp(i); }}
-                    className={`w-full text-right px-3 py-2.5 text-sm transition-colors hover:bg-green-50 flex items-center gap-2 ${selectedMsg === i ? "text-green-600 font-semibold" : "text-gray-700"}`}
+                    className={`w-full text-right px-3 py-2.5 text-sm transition-colors hover:bg-green-50 flex items-center justify-between gap-2 ${selectedMsg === i ? "text-green-600 font-semibold bg-green-50/50" : "text-gray-700"}`}
                   >
-                    {selectedMsg === i && <span className="text-green-500 text-xs">✓</span>}
-                    {msg}
+                    <span>{msg}</span>
+                    {selectedMsg === i && <span className="text-green-500 text-xs shrink-0">✓</span>}
                   </button>
                 ))}
               </div>
