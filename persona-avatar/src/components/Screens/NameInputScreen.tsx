@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAvatarContext } from "@/context/AvatarContext";
@@ -64,12 +64,20 @@ export function NameInputScreen() {
             <div className="flex-1 space-y-1">
               <p className="text-xs font-semibold text-brand-primary">רוצה לשמור ולערוך את האווטאר שלך?</p>
               <p className="text-xs text-gray-400">התחבר עם Google כדי שנשמור אותו עבורך ותוכל לערוך אותו בעתיד.</p>
-              <button
-                onClick={signIn}
-                className="text-xs font-bold text-brand-primary underline underline-offset-2 hover:opacity-70 transition-opacity mt-0.5"
-              >
-                התחבר עם Google ←
-              </button>
+              <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                <button
+                  onClick={signIn}
+                  className="text-xs font-bold text-brand-primary underline underline-offset-2 hover:opacity-70 transition-opacity"
+                >
+                  התחבר עם Google ←
+                </button>
+                <Link
+                  to="/benefits"
+                  className="text-xs text-gray-400 hover:text-brand-primary underline underline-offset-2 transition-colors"
+                >
+                  גלה את היתרונות
+                </Link>
+              </div>
             </div>
             {/* Dismiss X */}
             <button
