@@ -1,16 +1,12 @@
 import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { AvatarCarousel } from "@/components/AvatarCarousel";
 import { buildAvatarConfig } from "@/lib/avatar";
 import { useStats } from "@/hooks/useStats";
-import type { Traits } from "@/lib/avatar";
 
-const HERO_TRAITS: Traits = {
-  extrovert: 72, creative: 80, calm: 55, funny: 65, social: 70, gender: "other",
-};
-const heroConfig = buildAvatarConfig("ShapeYou", HERO_TRAITS);
 
 const GRID_PERSONAS: { name: string; traits: Traits }[] = [
   { name: "דניאל",  traits: { extrovert: 80, creative: 70, calm: 60, funny: 40, social: 75, gender: "male"   } },
@@ -67,6 +63,7 @@ function AvatarColumn({ items, direction, duration }: {
 export function LandingScreen() {
   const navigate = useNavigate();
   const stats = useStats();
+  const [heroConfig] = useState(() => GRID_CONFIGS[Math.floor(Math.random() * GRID_CONFIGS.length)].config);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-dark via-[#2d2870] to-brand-primary relative overflow-hidden">
