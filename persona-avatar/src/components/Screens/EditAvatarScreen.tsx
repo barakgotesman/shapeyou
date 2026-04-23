@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
@@ -14,6 +14,15 @@ import { getUnlockedAccessories, XP_UNLOCKS, FREE_ACCESSORIES } from "@/lib/avat
 import { Accessory } from "@/components/Avatar/Accessory";
 
 const FREE_SET = new Set<string>(FREE_ACCESSORIES);
+
+function ScreenCentered({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+      <PageBackground />
+      {children}
+    </div>
+  );
+}
 
 const LABELS: Record<string, string> = {
   glasses: "משקפיים",
@@ -142,13 +151,13 @@ function CategorySwiperRow({ category, avatar, activeSet, isAuto, saving, isUnlo
             loop={category.items.length > 2}
             onSwiper={sw => { swiperRef.current = sw; }}
           >
-            {category.items.map(acc => {
+            {category.items.map((acc, idx) => {
               const unlocked = isUnlocked(acc);
               const isActive = !isAuto && activeSet.has(acc);
               const color = HAT_ACCESSORIES.has(acc) ? avatar.config.hatColor : avatar.config.accentColor;
 
               return (
-                <SwiperSlide key={acc}>
+                <SwiperSlide key={`${category.key}-${acc}-${idx}`}>
                   <button
                     onClick={() => !saving && unlocked && onToggle(acc, category.items)}
                     disabled={!unlocked || saving}
@@ -236,11 +245,8 @@ export function EditAvatarScreen() {
   const isAuto = selection === null;
   const activeSet = new Set(selection ?? []);
 
-  const handleToggle = async (acc: string, categoryItems: string[]) => {
-    if (!id || !isOwner || saving || !isUnlocked(acc)) return;
-    const current = selection ?? [];
-    const withoutCategory = current.filter(a => !categoryItems.includes(a));
-    const next = activeSet.has(acc) ? withoutCategory : [...withoutCategory, acc];
+  const saveSelection = async (next: string[] | null) => {
+    if (!id) return;
     setSelection(next);
     setSaving(true);
     try {
@@ -252,47 +258,20 @@ export function EditAvatarScreen() {
     }
   };
 
-  const handleAuto = async () => {
-    if (!id || !isOwner || saving) return;
-    setSelection(null);
-    setSaving(true);
-    try {
-      await setChosenAccessory(id, null);
-    } catch {
-      setSelection(avatar?.chosenAccessory ?? null);
-    } finally {
-      setSaving(false);
-    }
+  const handleToggle = (acc: string, categoryItems: string[]) => {
+    if (!isOwner || saving || !isUnlocked(acc)) return;
+    const withoutCategory = (selection ?? []).filter(a => !categoryItems.includes(a));
+    saveSelection(activeSet.has(acc) ? withoutCategory : [...withoutCategory, acc]);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <PageBackground />
-        <p className="text-brand-primary animate-pulse text-lg font-semibold">טוען...</p>
-      </div>
-    );
-  }
+  const handleAuto = () => {
+    if (!isOwner || saving) return;
+    saveSelection(null);
+  };
 
-  if (notFound || !avatar) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-        <PageBackground />
-        <p className="text-2xl font-bold text-brand-dark">האווטאר לא נמצא</p>
-        <Button onClick={() => navigate("/")}>חזור לדף הבית</Button>
-      </div>
-    );
-  }
-
-  if (!isOwner) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-        <PageBackground />
-        <p className="text-2xl font-bold text-brand-dark">אין לך גישה לערוך אווטאר זה</p>
-        <Button onClick={() => navigate(`/avatar/${id}`)}>צפה בפרופיל</Button>
-      </div>
-    );
-  }
+  if (loading) return <ScreenCentered><p className="text-brand-primary animate-pulse text-lg font-semibold">טוען...</p></ScreenCentered>;
+  if (notFound || !avatar) return <ScreenCentered><p className="text-2xl font-bold text-brand-dark">האווטאר לא נמצא</p><Button onClick={() => navigate("/")}>חזור לדף הבית</Button></ScreenCentered>;
+  if (!isOwner) return <ScreenCentered><p className="text-2xl font-bold text-brand-dark">אין לך גישה לערוך אווטאר זה</p><Button onClick={() => navigate(`/avatar/${id}`)}>צפה בפרופיל</Button></ScreenCentered>;
 
   return (
     <div className="min-h-screen flex flex-col items-center px-4 pt-28 pb-20 gap-6" dir="rtl">
