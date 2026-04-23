@@ -115,17 +115,16 @@ export type AvatarDoc = {
   description: string;
   likes: number;
   likedIPs: string[];
-  // null when the avatar was created without signing in
   ownerUid: string | null;
-  // XP earned — currently 1 per like, reserved for future sources
   xp: number;
-  // Owner-chosen accessory overrides; null = auto (use trait-generated), [] = none, [...] = these accessories
   chosenAccessory: string[] | null;
+  // Owner's first name — set when showNameInProfile is ON, null when OFF
+  ownerFirstName: string | null;
 };
 
 // Saves a new avatar to Firestore and returns the doc ID.
 // ownerUid is the Firebase Auth uid of the signed-in user, or null if anonymous.
-export async function saveAvatar(data: Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">): Promise<string> {
+export async function saveAvatar(data: Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory" | "ownerFirstName"> & { ownerFirstName: string | null }): Promise<string> {
   const ref = await addDoc(collection(db, "avatars"), {
     ...data,
     likes: 0,
@@ -135,6 +134,13 @@ export async function saveAvatar(data: Omit<AvatarDoc, "id" | "likes" | "likedIP
     createdAt: serverTimestamp(),
   });
   return ref.id;
+}
+
+// Updates ownerFirstName on all avatars owned by uid.
+// Call with firstName when user turns ON showNameInProfile, null when OFF.
+export async function updateOwnerFirstNameForAll(uid: string, firstName: string | null): Promise<void> {
+  const snap = await getDocs(query(collection(db, "avatars"), where("ownerUid", "==", uid)));
+  await Promise.all(snap.docs.map(d => updateDoc(d.ref, { ownerFirstName: firstName })));
 }
 
 export async function likeAvatar(id: string, ip: string): Promise<void> {
@@ -181,7 +187,7 @@ export function subscribeAvatar(id: string, onUpdate: (avatar: AvatarDoc) => voi
     if (!snap.exists()) return;
     const raw = snap.data();
     const data = raw as Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">;
-    onUpdate({ likes: 0, likedIPs: [], xp: 0, ...data, chosenAccessory: normalizeChosen(raw.chosenAccessory), id: snap.id });
+    onUpdate({ likes: 0, likedIPs: [], xp: 0, ownerFirstName: null, ...data, chosenAccessory: normalizeChosen(raw.chosenAccessory), id: snap.id });
   });
 }
 
@@ -193,7 +199,7 @@ export async function loadAvatar(id: string): Promise<AvatarDoc | null> {
   if (!snap.exists()) return null;
   const raw = snap.data();
   const data = raw as Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">;
-  return { likes: 0, likedIPs: [], xp: 0, ...data, chosenAccessory: normalizeChosen(raw.chosenAccessory), id: snap.id };
+  return { likes: 0, likedIPs: [], xp: 0, ownerFirstName: null, ...data, chosenAccessory: normalizeChosen(raw.chosenAccessory), id: snap.id };
 }
 
 // Loads all avatars owned by a specific user, sorted newest first.
@@ -210,6 +216,7 @@ export async function loadMyAvatars(uid: string): Promise<AvatarDoc[]> {
     likes: 0,
     likedIPs: [],
     xp: 0,
+    ownerFirstName: null,
     ...(d.data() as Omit<AvatarDoc, "id" | "likes" | "likedIPs" | "xp" | "chosenAccessory">),
     chosenAccessory: normalizeChosen(d.data().chosenAccessory),
     id: d.id,

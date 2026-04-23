@@ -39,7 +39,7 @@ export function TraitsScreen() {
       const config = buildAvatarConfig(name, traits);
       const description = generateDescription(name, traits);
       const ownerUid = user?.uid ?? null;
-      const id = await saveAvatar({ name, traits, config, description, ownerUid });
+      const id = await saveAvatar({ name, traits, config, description, ownerUid, ownerFirstName: null });
 
       // Mark anonymous creation so they can't create another without signing in
       if (!user) localStorage.setItem(ANON_KEY, "1");
