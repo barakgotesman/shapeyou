@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
@@ -128,6 +128,9 @@ export function LandingScreen() {
             <Button variant="highlight" size="lg" className="w-full font-bold text-base rounded-xl" onClick={() => navigate("/create")}>
               צור את האווטאר שלי ✦
             </Button>
+            <Link to="/benefits" className="text-xs text-gray-400 hover:text-brand-primary transition-colors text-center" dir="rtl">
+              רוצה תכונות מגניבות יותר? גלה את היתרונות של כניסה ←
+            </Link>
             <div className="flex gap-6 w-full justify-center border-t border-brand-muted pt-4">
               <div className="text-center">
                 <p className="text-2xl font-black text-brand-dark">{stats.loading ? "..." : stats.totalAvatars.toLocaleString()}</p>
@@ -176,6 +179,9 @@ export function LandingScreen() {
           <Button variant="highlight" size="lg" className="w-full font-bold text-base rounded-xl" onClick={() => navigate("/create")}>
             צור את האווטאר שלי ✦
           </Button>
+          <Link to="/benefits" className="text-xs text-gray-400 hover:text-brand-primary transition-colors text-center" dir="rtl">
+            רוצה תכונות מגניבות יותר? גלה את היתרונות של כניסה ←
+          </Link>
           <div className="flex gap-6 w-full justify-center border-t border-brand-muted pt-4">
             <div className="text-center">
               <p className="text-2xl font-black text-brand-dark">{stats.loading ? "..." : stats.totalAvatars.toLocaleString()}</p>
