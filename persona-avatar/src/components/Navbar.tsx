@@ -113,6 +113,12 @@ export function Navbar() {
                       השייפים שלי
                     </button>
                     <button
+                      onClick={() => { setDropdownOpen(false); navigate("/settings"); }}
+                      className="w-full text-right px-4 py-2.5 text-sm text-brand-dark hover:bg-gray-50 transition-colors"
+                    >
+                      הגדרות
+                    </button>
+                    <button
                       onClick={handleSignOut}
                       className="w-full text-right px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
                     >
@@ -179,6 +185,12 @@ export function Navbar() {
                   className="text-right px-5 py-3 text-sm font-semibold text-brand-dark hover:bg-gray-50 transition-colors"
                 >
                   השייפים שלי
+                </button>
+                <button
+                  onClick={() => { setMenuOpen(false); navigate("/settings"); }}
+                  className="text-right px-5 py-3 text-sm font-semibold text-brand-dark hover:bg-gray-50 transition-colors"
+                >
+                  הגדרות
                 </button>
                 <button
                   onClick={handleSignOut}

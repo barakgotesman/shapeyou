@@ -13,6 +13,7 @@ import { LeaderboardScreen } from "@/components/Screens/LeaderboardScreen";
 import { MyAvatarsScreen } from "@/components/Screens/MyAvatarsScreen";
 import { EditAvatarScreen } from "@/components/Screens/EditAvatarScreen";
 import { BenefitsScreen } from "@/components/Screens/BenefitsScreen";
+import { SettingsScreen } from "@/components/Screens/SettingsScreen";
 import { Footer } from "@/components/Footer";
 
 function CreateRoute() {
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/my-avatars" element={<MyAvatarsScreen />} />
         <Route path="/edit/:id" element={<EditAvatarScreen />} />
         <Route path="/benefits" element={<BenefitsScreen />} />
+        <Route path="/settings" element={<SettingsScreen />} />
       </Routes>
       <Footer />
       <Toaster />
