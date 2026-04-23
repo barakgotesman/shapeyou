@@ -31,6 +31,13 @@ export function SharedAvatarScreen() {
   const [ip, setIp] = useState<string | null>(null);
   const [liking, setLiking] = useState(false);
   const [coinFlash, setCoinFlash] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (!id) { setNotFound(true); setLoading(false); return; }
@@ -145,6 +152,13 @@ export function SharedAvatarScreen() {
         </div>
 
         <div className="w-full h-px bg-brand-muted my-6" />
+
+        <button
+          onClick={handleShare}
+          className="w-full flex items-center justify-center gap-2 border border-brand-muted rounded-xl py-2.5 text-sm font-semibold text-brand-primary hover:bg-brand-primary/5 transition-colors"
+        >
+          {copied ? "✓ הקישור הועתק!" : "🔗 שתף את האווטאר"}
+        </button>
 
         <Button className="w-full rounded-xl font-semibold" onClick={() => navigate("/")}>
           צור את שלך ←
