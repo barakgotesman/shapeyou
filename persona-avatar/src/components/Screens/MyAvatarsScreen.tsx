@@ -4,16 +4,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { loadMyAvatars } from "@/lib/firebase";
+import { loadMyAvatars, buyAvatarSlot, SLOT_COST } from "@/lib/firebase";
 import type { AvatarDoc } from "@/lib/firebase";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { PageBackground } from "@/components/PageBackground";
 
 export function MyAvatarsScreen() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, userDoc, refreshUserDoc } = useAuth();
   const navigate = useNavigate();
   const [avatars, setAvatars] = useState<AvatarDoc[]>([]);
   const [loading, setLoading] = useState(true);
+  const [buyingSlot, setBuyingSlot] = useState(false);
+
+  const handleBuySlot = async () => {
+    if (!user) return;
+    setBuyingSlot(true);
+    try {
+      await buyAvatarSlot(user.uid);
+      await refreshUserDoc();
+    } catch {
+      // not enough coins — ignore, UI already shows balance
+    } finally {
+      setBuyingSlot(false);
+    }
+  };
 
   // Wait for Firebase Auth to resolve before deciding to redirect
   useEffect(() => {
@@ -59,6 +73,28 @@ export function MyAvatarsScreen() {
           <p className="text-white/50 text-sm mt-1">שלום, {user.displayName} 👋</p>
         )}
       </div>
+
+      {/* Coin balance + slot info */}
+      {userDoc && (
+        <div className="flex items-center gap-4 bg-white/8 border border-white/10 rounded-2xl px-5 py-3 mb-6 text-sm" dir="rtl">
+          <div className="flex items-center gap-1.5 text-yellow-300 font-semibold">
+            <span>🪙</span>
+            <span>{userDoc.coins} מטבעות</span>
+          </div>
+          <div className="w-px h-4 bg-white/20" />
+          <div className="text-white/50">
+            <span dir="ltr">{avatars.length} / {userDoc.avatarSlots}</span> אווטארים
+          </div>
+          <div className="w-px h-4 bg-white/20" />
+          <button
+            onClick={handleBuySlot}
+            disabled={buyingSlot || userDoc.coins < SLOT_COST}
+            className="text-brand-primary font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80 transition-opacity"
+          >
+            {buyingSlot ? "קונה..." : `+ משבצת (${SLOT_COST} 🪙)`}
+          </button>
+        </div>
+      )}
 
       {/* Empty state */}
       {avatars.length === 0 && (
