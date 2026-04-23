@@ -34,14 +34,13 @@ export function SharedAvatarScreen() {
 
   useEffect(() => {
     if (!id) { setNotFound(true); setLoading(false); return; }
-    Promise.all([
-      loadAvatar(id),
-      fetchHashedIP(),
-    ]).then(([doc, userIp]) => {
-      if (!doc) setNotFound(true);
-      else setAvatar(doc);
-      setIp(userIp);
-    }).catch(() => setNotFound(true))
+    Promise.all([loadAvatar(id), fetchHashedIP()])
+      .then(([doc, userIp]) => {
+        if (!doc) { setNotFound(true); return; }
+        setAvatar(doc);
+        setIp(userIp);
+      })
+      .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -95,9 +94,24 @@ export function SharedAvatarScreen() {
 
         <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl bg-gradient-to-r from-brand-primary via-brand-highlight to-brand-secondary" />
 
-        <p className="text-xs font-medium uppercase tracking-widest text-brand-primary mt-2">
-          shapeyou של מישהו
-        </p>
+        {(() => {
+          const isOwner = !!(user && avatar.ownerUid && user.uid === avatar.ownerUid);
+          const ownerFirstName = isOwner
+            ? (user!.displayName?.split(" ")[0] ?? "אתה")
+            : avatar.ownerFirstName;
+          return (
+            <>
+              <p className="text-xs font-medium uppercase tracking-widest text-brand-primary mt-2">
+                {ownerFirstName ? `השייפיו של ${ownerFirstName}` : "שייפיו של מישהו"}
+              </p>
+              {isOwner && !avatar.ownerFirstName && (
+                <p className="text-[10px] text-gray-300 mt-0.5" dir="rtl">
+                  שמך לא מוצג לציבור לפי הגדרותיך
+                </p>
+              )}
+            </>
+          );
+        })()}
 
         <div className="mt-4">
           <AvatarDisplay config={avatar.config as AvatarConfig} chosenAccessory={avatar.chosenAccessory} size={260} />
