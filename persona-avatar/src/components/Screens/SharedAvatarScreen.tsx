@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { Button } from "@/components/ui/button";
@@ -39,14 +39,33 @@ export function SharedAvatarScreen() {
   const [ip, setIp] = useState<string | null>(null);
   const [liking, setLiking] = useState(false);
   const [coinFlash, setCoinFlash] = useState(0);
+  const [waOpen, setWaOpen] = useState(false);
+  const [selectedMsg, setSelectedMsg] = useState(0);
+  const waRef = useRef<HTMLDivElement>(null);
+
+  const WA_MESSAGES = [
+    "קלוט את השפיו שלי! 👀",
+    "תעשה לי לייק לשפיו שלי ❤️",
+    "הנה השפיו שיצרתי 🎨",
+  ];
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (waRef.current && !waRef.current.contains(e.target as Node)) setWaOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(window.location.href);
     toast({ title: "הקישור הועתק! 🔗", description: "שתף אותו עם מי שתרצה" });
   };
 
-  const handleWhatsApp = () => {
-    const msg = encodeURIComponent(`קלוט את השייפיו שלי!\n${window.location.href}`);
+  const handleWhatsApp = (msgIndex: number) => {
+    const msg = encodeURIComponent(`${WA_MESSAGES[msgIndex]}\n${window.location.href}`);
     window.open(`https://wa.me/?text=${msg}`, "_blank");
+    setWaOpen(false);
   };
 
   useEffect(() => {
@@ -172,24 +191,47 @@ export function SharedAvatarScreen() {
           </span>
         </div>
 
-        <div className="w-full h-px bg-brand-muted my-6" />
+        <div className="w-full h-px bg-brand-muted mt-6 mb-5" />
 
-        <div className="flex gap-2 w-full">
+        {/* Share row */}
+        <div className="flex gap-2 w-full" dir="rtl">
           <button
             onClick={handleCopyUrl}
             className="flex-1 flex items-center justify-center gap-1.5 border border-brand-muted rounded-xl py-2.5 text-sm font-semibold text-brand-primary hover:bg-brand-primary/5 transition-colors"
           >
             🔗 העתק קישור
           </button>
-          <button
-            onClick={handleWhatsApp}
-            className="flex-1 flex items-center justify-center gap-1.5 border border-green-200 rounded-xl py-2.5 text-sm font-semibold text-green-600 hover:bg-green-50 transition-colors"
-          >
-            <WhatsAppIcon /> שתף
-          </button>
+
+          {/* WhatsApp with message picker */}
+          <div className="flex-1 relative" ref={waRef}>
+            <button
+              onClick={() => setWaOpen(o => !o)}
+              className="w-full flex items-center justify-center gap-1.5 border border-green-200 rounded-xl py-2.5 text-sm font-semibold text-green-600 hover:bg-green-50 transition-colors"
+            >
+              <WhatsAppIcon /> שתף בוואטסאפ
+            </button>
+
+            {waOpen && (
+              <div className="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50" dir="rtl">
+                <p className="px-3 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                  בחר הודעה
+                </p>
+                {WA_MESSAGES.map((msg, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setSelectedMsg(i); handleWhatsApp(i); }}
+                    className={`w-full text-right px-3 py-2.5 text-sm transition-colors hover:bg-green-50 flex items-center gap-2 ${selectedMsg === i ? "text-green-600 font-semibold" : "text-gray-700"}`}
+                  >
+                    {selectedMsg === i && <span className="text-green-500 text-xs">✓</span>}
+                    {msg}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        <Button className="w-full rounded-xl font-semibold" onClick={() => navigate("/")}>
+        <Button className="w-full rounded-xl font-semibold mt-3" onClick={() => navigate("/")}>
           צור את שלך ←
         </Button>
       </div>
