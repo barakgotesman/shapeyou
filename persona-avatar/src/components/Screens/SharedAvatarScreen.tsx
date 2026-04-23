@@ -9,6 +9,12 @@ import type { AvatarConfig } from "@/lib/avatar";
 import { PageBackground } from "@/components/PageBackground";
 import { useAuth } from "@/context/AuthContext";
 
+function setMeta(property: string, content: string) {
+  let el = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`);
+  if (!el) { el = document.createElement("meta"); el.setAttribute("property", property); document.head.appendChild(el); }
+  el.setAttribute("content", content);
+}
+
 async function fetchHashedIP(): Promise<string | null> {
   try {
     const res = await fetch("https://api.ipify.org?format=json");
@@ -39,7 +45,7 @@ export function SharedAvatarScreen() {
   };
 
   const handleWhatsApp = () => {
-    const msg = encodeURIComponent(`קלוט את השייפיו שלי! ${window.location.href}`);
+    const msg = encodeURIComponent(`קלוט את השייפיו שלי!\n${window.location.href}`);
     window.open(`https://wa.me/?text=${msg}`, "_blank");
   };
 
@@ -50,6 +56,17 @@ export function SharedAvatarScreen() {
         if (!doc) { setNotFound(true); return; }
         setAvatar(doc);
         setIp(userIp);
+
+        // Inject per-avatar OG tags so WhatsApp/social crawlers show the right preview
+        const url = window.location.href;
+        const title = `השייפיו של ${doc.ownerFirstName ?? "מישהו"} — ShapeYou`;
+        const desc = doc.description ?? "בוא תראה את הדמות שנוצרה בשבילי!";
+        setMeta("og:title", title);
+        setMeta("og:description", desc);
+        setMeta("og:url", url);
+        setMeta("twitter:title", title);
+        setMeta("twitter:description", desc);
+        document.title = title;
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
