@@ -1,18 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAvatarContext } from "@/context/AvatarContext";
 import { useAuth } from "@/context/AuthContext";
+import { getUserAvatarCount } from "@/lib/firebase";
+import { LEGAL } from "@/lib/legal";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function NameInputScreen() {
   const { name, setName } = useAvatarContext();
-  const { user, loading: authLoading, signIn } = useAuth();
+  const { user, userDoc, loading: authLoading, signIn } = useAuth();
+  const [limitReached, setLimitReached] = useState(false);
   const [error, setError] = useState("");
   const [dismissed, setDismissed] = useState(false);
   const navigate = useNavigate();
 
+  // Logged-in users who used all their slots are told up front, not after step 2
+  useEffect(() => {
+    if (!user || !userDoc) { setLimitReached(false); return; }
+    let cancelled = false;
+    getUserAvatarCount(user.uid)
+      .then(count => { if (!cancelled) setLimitReached(count >= userDoc.avatarSlots); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [user, userDoc]);
+
   const handleContinue = () => {
+    if (limitReached) return;
     const trimmed = name.trim();
     if (trimmed.length < 2)  { setError("השם חייב להכיל לפחות 2 תווים."); return; }
     if (trimmed.length > 20) { setError("השם לא יכול לעלות על 20 תווים."); return; }
@@ -42,11 +57,28 @@ export function NameInputScreen() {
           <div className="w-6 h-6 rounded-full bg-brand-muted flex items-center justify-center text-xs font-bold text-gray-300">2</div>
         </div>
 
+        {!limitReached && (
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold text-brand-dark">מה השם שלך?</h2>
           <p className="text-sm text-gray-400">השם מעצב את האווטאר שלך.</p>
         </div>
+        )}
 
+        {limitReached && (
+          <Alert variant="destructive" dir="rtl">
+            <AlertDescription className="flex flex-col gap-1 text-center">
+              <span className="font-semibold">הגעת למגבלת האווטארים שלך ({userDoc?.avatarSlots})</span>
+              <span className="text-xs opacity-80">
+                קנה משבצת נוספת ב-10 מטבעות מתוך{" "}
+                <button onClick={() => navigate("/my-avatars")} className="underline font-semibold">
+                  השייפים שלי
+                </button>
+              </span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {!limitReached && (
         <div className="space-y-1">
           <Input
             dir="rtl"
@@ -57,9 +89,10 @@ export function NameInputScreen() {
           />
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
+        )}
 
         {/* Sign-in nudge — shown only when not signed in and not dismissed */}
-        {!authLoading && !user && !dismissed && (
+        {!limitReached && !authLoading && !user && !dismissed && (
           <div className="flex items-start gap-3 bg-brand-primary/8 border border-brand-primary/20 rounded-xl px-4 py-3 text-right" dir="rtl">
             <div className="flex-1 space-y-1">
               <p className="text-xs font-semibold text-brand-primary">רוצה לשמור ולערוך את האווטאר שלך?</p>
@@ -91,9 +124,21 @@ export function NameInputScreen() {
         )}
 
         {/* default variant = bg-brand-primary text-white */}
-        <Button size="lg" className="w-full" onClick={handleContinue}>
-          המשך ←
-        </Button>
+        {!limitReached && (
+          <Button size="lg" className="w-full" onClick={handleContinue}>
+            המשך ←
+          </Button>
+        )}
+
+        {!limitReached && (
+          <p className="text-[11px] text-gray-400 text-center leading-relaxed" dir="rtl">
+            בלחיצה על "המשך" אתה מאשר שקראת והסכמת ל
+            <Link to="/terms" className="underline underline-offset-2 hover:text-brand-primary">תנאי השימוש</Link>
+            {" "}ול
+            <Link to="/privacy" className="underline underline-offset-2 hover:text-brand-primary">מדיניות הפרטיות</Link>
+            , ושאתה בן {LEGAL.minAge} ומעלה (או שהורה מסכים).
+          </p>
+        )}
 
         <button
           className="text-xs text-gray-400 hover:text-brand-primary text-center transition-colors"

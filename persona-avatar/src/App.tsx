@@ -1,4 +1,5 @@
-import { Routes, Route, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, useSearchParams, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "sonner";
 import { AvatarProvider } from "@/context/AvatarContext";
@@ -14,7 +15,17 @@ import { MyAvatarsScreen } from "@/components/Screens/MyAvatarsScreen";
 import { EditAvatarScreen } from "@/components/Screens/EditAvatarScreen";
 import { BenefitsScreen } from "@/components/Screens/BenefitsScreen";
 import { SettingsScreen } from "@/components/Screens/SettingsScreen";
+import { TermsScreen } from "@/components/Screens/TermsScreen";
+import { PrivacyScreen } from "@/components/Screens/PrivacyScreen";
+import { AccessibilityScreen } from "@/components/Screens/AccessibilityScreen";
 import { Footer } from "@/components/Footer";
+
+// Reset scroll to the top on every navigation (including create step changes)
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname, search]);
+  return null;
+}
 
 function CreateRoute() {
   const [params] = useSearchParams();
@@ -27,6 +38,7 @@ export default function App() {
     // AvatarProvider sits inside so it can read auth state in the future if needed
     <AuthProvider>
     <AvatarProvider>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/"       element={<LandingScreen />} />
@@ -38,6 +50,9 @@ export default function App() {
         <Route path="/edit/:id" element={<EditAvatarScreen />} />
         <Route path="/benefits" element={<BenefitsScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
+        <Route path="/terms" element={<TermsScreen />} />
+        <Route path="/privacy" element={<PrivacyScreen />} />
+        <Route path="/accessibility" element={<AccessibilityScreen />} />
       </Routes>
       <Footer />
       <Toaster />

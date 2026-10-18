@@ -114,8 +114,8 @@ export function LandingScreen() {
             </p>
           </div>
 
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full p-5 flex flex-col items-center gap-3">
-            <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl bg-gradient-to-r from-brand-primary via-brand-highlight to-brand-secondary" />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full p-5 flex flex-col items-center gap-3 overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-primary via-brand-highlight to-brand-secondary" />
             <div className="relative mt-1">
               <div className="absolute inset-0 rounded-full bg-brand-secondary blur-xl opacity-50 scale-110" />
               <AvatarDisplay config={heroConfig} size={120} className="relative" />
@@ -165,8 +165,8 @@ export function LandingScreen() {
           </p>
         </div>
 
-        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 flex flex-col items-center gap-5">
-          <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl bg-gradient-to-r from-brand-primary via-brand-highlight to-brand-secondary" />
+        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 flex flex-col items-center gap-5 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-primary via-brand-highlight to-brand-secondary" />
           <div className="relative mt-1">
             <div className="absolute inset-0 rounded-full bg-brand-secondary blur-xl opacity-50 scale-110" />
             <AvatarDisplay config={heroConfig} size={160} className="relative" />
