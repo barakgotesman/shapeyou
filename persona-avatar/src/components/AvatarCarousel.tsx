@@ -45,7 +45,6 @@ export function AvatarCarousel() {
         <Swiper
           modules={[Autoplay, FreeMode]}
           freeMode={{ enabled: true, momentum: false }}
-          loop
           slidesPerView="auto"
           spaceBetween={6}
           autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: false }}

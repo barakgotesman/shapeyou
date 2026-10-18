@@ -199,7 +199,7 @@ export const Background = ({ config, static: isStatic = false, uid = "av" }: Pro
           {([
             [16,16,48,40],[48,40,26,70],[48,40,80,26],[26,70,58,88],[80,26,108,16],[108,16,136,36],
           ] as const).map(([x1,y1,x2,y2]) => (
-            <line key={`${x1}-${y1}`} x1={x1} y1={y1} x2={x2} y2={y2}
+            <line key={`${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2}
               stroke={primaryColor} strokeWidth={1.6}>
               {!isStatic && <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite" />}
             </line>

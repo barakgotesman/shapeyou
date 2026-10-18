@@ -1,6 +1,6 @@
 import { Routes, Route, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 import { AvatarProvider } from "@/context/AvatarContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { LandingScreen } from "@/components/Screens/LandingScreen";

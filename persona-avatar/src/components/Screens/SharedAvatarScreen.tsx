@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { Button } from "@/components/ui/button";
 import { loadAvatar, likeAvatar, awardLikerCoins } from "@/lib/firebase";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 import type { AvatarDoc } from "@/lib/firebase";
 import type { AvatarConfig } from "@/lib/avatar";
 import { PageBackground } from "@/components/PageBackground";
@@ -32,7 +33,6 @@ export function SharedAvatarScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, refreshUserDoc } = useAuth();
-  const { toast } = useToast();
   const [avatar, setAvatar] = useState<AvatarDoc | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -59,7 +59,7 @@ export function SharedAvatarScreen() {
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(window.location.href);
-    toast({ title: "הקישור הועתק! 🔗", description: "שתף אותו עם מי שתרצה" });
+    toast.success("הקישור הועתק!", { description: "שתף אותו עם מי שתרצה" });
   };
 
   const handleWhatsApp = (msgIndex: number) => {
@@ -191,7 +191,7 @@ export function SharedAvatarScreen() {
           </span>
         </div>
 
-        <div className="w-full h-px bg-brand-muted mt-6 mb-5" />
+        <Separator className="mt-6 mb-5" />
 
         {/* Share row */}
         <div className="flex gap-2 w-full" dir="rtl">

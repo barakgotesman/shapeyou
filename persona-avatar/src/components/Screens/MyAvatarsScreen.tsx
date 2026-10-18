@@ -8,6 +8,8 @@ import { loadMyAvatars, buyAvatarSlot, SLOT_COST } from "@/lib/firebase";
 import type { AvatarDoc } from "@/lib/firebase";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { PageBackground } from "@/components/PageBackground";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export function MyAvatarsScreen() {
   const { user, loading: authLoading, userDoc, refreshUserDoc } = useAuth();
@@ -100,12 +102,9 @@ export function MyAvatarsScreen() {
       {avatars.length === 0 && (
         <div className="flex flex-col items-center gap-4 mt-8">
           <p className="text-white/50 text-lg">עדיין אין לך אווטארים.</p>
-          <button
-            onClick={() => navigate("/create")}
-            className="bg-brand-primary text-white font-semibold px-6 py-2.5 rounded-full hover:opacity-90 transition-opacity"
-          >
+          <Button onClick={() => navigate("/create")} className="rounded-full px-6">
             צור את הראשון שלך ✦
-          </button>
+          </Button>
         </div>
       )}
 
@@ -125,34 +124,35 @@ export function MyAvatarsScreen() {
                 <p className="font-semibold text-white text-sm mt-2 truncate w-full text-center">
                   {avatar.name}
                 </p>
-                <p className="text-white/40 text-xs mt-0.5">❤️ {avatar.likes}</p>
+                <Badge variant="secondary" className="text-xs mt-0.5 bg-white/10 text-white/50 border-white/10">❤️ {avatar.likes}</Badge>
 
                 {/* Action buttons */}
                 <div className="flex gap-2 mt-3 w-full">
-                  <button
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="flex-1 text-xs text-white/60 hover:text-white border border-white/15 hover:border-white/30 rounded-lg"
                     onClick={() => navigate(`/avatar/${avatar.id}`)}
-                    className="flex-1 text-xs font-semibold text-white/60 hover:text-white border border-white/15 hover:border-white/30 rounded-lg py-1.5 transition-colors"
                   >
                     צפה
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 text-xs rounded-lg"
                     onClick={() => navigate(`/edit/${avatar.id}`)}
-                    className="flex-1 text-xs font-semibold text-brand-primary border border-brand-primary/40 hover:bg-brand-primary hover:text-white rounded-lg py-1.5 transition-colors"
                   >
                     ערוך
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Create another CTA */}
-          <button
-            onClick={() => navigate("/create")}
-            className="mt-10 bg-brand-primary text-white font-semibold px-6 py-2.5 rounded-full hover:opacity-90 transition-opacity"
-          >
+          <Button onClick={() => navigate("/create")} className="mt-10 rounded-full px-6">
             צור אווטאר חדש ✦
-          </button>
+          </Button>
         </>
       )}
     </div>

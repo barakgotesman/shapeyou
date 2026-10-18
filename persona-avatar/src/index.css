@@ -94,24 +94,24 @@
     --brand-surface:   #F5F3FF;
     --brand-muted:     #EDE9FE;
 
-    /* shadcn/ui tokens — mapped to brand palette */
-    --background:             245 243 255;   /* brand-surface */
-    --foreground:             31  27  78;    /* brand-dark    */
-    --card:                   255 255 255;
-    --card-foreground:        31  27  78;
-    --primary:                245 243 255;   /* overridden inline via bg-brand-primary */
-    --primary-foreground:     255 255 255;
-    --secondary:              237 233 254;   /* brand-muted   */
-    --secondary-foreground:   31  27  78;
-    --muted:                  237 233 254;
-    --muted-foreground:       107 99  164;
-    --accent:                 167 139 250;   /* brand-secondary */
-    --accent-foreground:      31  27  78;
-    --destructive:            239 68  68;
-    --destructive-foreground: 255 255 255;
-    --border:                 221 214 254;
-    --input:                  221 214 254;
-    --ring:                   108 99  255;   /* brand-primary */
+    /* shadcn/ui tokens — HSL format for hsl(var(--token)) in tailwind.config.ts */
+    --background:             248 100% 97%;  /* brand-surface #F5F3FF  */
+    --foreground:             243 48%  21%;  /* brand-dark    #1F1B4E  */
+    --card:                   0   0%   100%;
+    --card-foreground:        243 48%  21%;
+    --primary:                244 100% 69%; /* brand-primary #6C63FF  */
+    --primary-foreground:     0   0%   100%;
+    --secondary:              252 87%  96%; /* brand-muted   #EDE9FE  */
+    --secondary-foreground:   243 48%  21%;
+    --muted:                  252 87%  96%;
+    --muted-foreground:       249 24%  51%;
+    --accent:                 252 87%  96%;
+    --accent-foreground:      243 48%  21%;
+    --destructive:            0   84%  60%;
+    --destructive-foreground: 0   0%   100%;
+    --border:                 252 92%  92%; /* #DDD6FE */
+    --input:                  252 92%  92%;
+    --ring:                   244 100% 69%;
     --radius:                 0.75rem;
   }
 }

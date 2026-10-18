@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useAvatarContext } from "@/context/AvatarContext";
 import { buildAvatarConfig } from "@/lib/avatar";
 import { generateDescription } from "@/lib/description";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { PageBackground } from "@/components/PageBackground";
+import { Separator } from "@/components/ui/separator";
 
 export function ResultScreen() {
   const { name, traits } = useAvatarContext();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [params] = useSearchParams();
 
@@ -41,11 +41,7 @@ export function ResultScreen() {
 
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
-    toast({
-      title: "הקישור הועתק! ✦",
-      description: "שתף אותו עם מישהו שיאהב את זה.",
-      className: "bg-brand-dark text-white border-none",
-    });
+    toast.success("הקישור הועתק!", { description: "שתף אותו עם מישהו שיאהב את זה." });
   };
 
   return (
@@ -64,7 +60,7 @@ export function ResultScreen() {
         <h2 className="text-2xl font-bold text-brand-dark text-center mt-6">{name}</h2>
         <p className="text-sm text-gray-400 italic text-center mt-2">{description}</p>
 
-        <div className="w-full h-px bg-brand-muted my-6" />
+        <Separator className="my-6" />
 
         <Button
           className="w-full rounded-xl font-semibold"

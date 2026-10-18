@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { AvatarDisplay } from "@/components/Avatar/AvatarDisplay";
 import { buildAvatarConfig } from "@/lib/avatar";
 import type { Traits, Gender } from "@/lib/avatar";
@@ -54,55 +55,50 @@ export function TraitsForm({
 
       {/* ── Sliders card ── */}
       <Card className="relative bg-white border border-brand-muted rounded-2xl shadow-md overflow-hidden">
-        {/* Rainbow top accent */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-brand-highlight to-brand-secondary" />
-        <CardContent className="p-8 space-y-6">
+        <CardContent className="p-8 flex flex-col gap-6">
           <div>
             <h2 className="text-2xl font-semibold text-brand-dark">עצב את האישיות שלך</h2>
             <p className="text-sm text-gray-400 mt-1">הזז את המחוונים — האווטאר שלך מתעדכן בזמן אמת.</p>
           </div>
 
           {/* Name */}
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">השם שלך</label>
             <Input
               placeholder="לדוגמה: דניאל"
               value={name}
               onChange={(e) => onNameChange(e.target.value)}
             />
-            {nameError && <p className="text-sm text-red-500 mt-1">{nameError}</p>}
+            {nameError && <p className="text-sm text-red-500">{nameError}</p>}
           </div>
 
           {/* Gender */}
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">מגדר</label>
-            <div className="grid grid-cols-3 gap-2">
-              {GENDER_OPTIONS.map(({ value, label, icon }) => {
-                const selected = traits.gender === value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setGender(value)}
-                    className="flex flex-col items-center gap-1 py-3 rounded-xl border-2 text-sm font-medium transition-all"
-                    // inline style required for dynamic selected state — Tailwind JIT can't resolve conditional brand-* classes
-                    style={selected
-                      ? { backgroundColor: "#6C63FF", borderColor: "#6C63FF", color: "#fff", boxShadow: "0 2px 8px rgba(108,99,255,0.25)" }
-                      : { backgroundColor: "#fff", borderColor: "#EDE9FE", color: "#6b7280" }
-                    }
-                  >
-                    <span className="text-lg leading-none">{icon}</span>
-                    <span>{label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <ToggleGroup
+              type="single"
+              value={traits.gender}
+              onValueChange={(val) => val && setGender(val as Gender)}
+              className="grid grid-cols-3 gap-2"
+            >
+              {GENDER_OPTIONS.map(({ value, label, icon }) => (
+                <ToggleGroupItem
+                  key={value}
+                  value={value}
+                  className="flex flex-col gap-1 py-3 rounded-xl border-2 text-sm font-medium data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:border-primary border-secondary"
+                >
+                  <span className="text-lg leading-none">{icon}</span>
+                  <span>{label}</span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </div>
 
           {/* Trait sliders */}
-          <div className="space-y-5">
+          <div className="flex flex-col gap-5">
             {TRAIT_LABELS.map(({ key, lo, hi, label }) => (
-              <div key={key} className="space-y-1.5">
+              <div key={key} className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</span>
                   <span className="text-xs font-semibold tabular-nums text-brand-primary">{traits[key]}</span>

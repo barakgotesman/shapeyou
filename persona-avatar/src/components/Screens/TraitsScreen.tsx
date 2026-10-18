@@ -7,6 +7,7 @@ import { generateDescription } from "@/lib/description";
 import { saveAvatar, getUserAvatarCount } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { PageBackground } from "@/components/PageBackground";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function TraitsScreen() {
   const { name, traits, setName, setTraits, setAvatarId } = useAvatarContext();
@@ -71,29 +72,31 @@ export function TraitsScreen() {
 
       {/* Slot limit reached */}
       {limitError && (
-        <div className="w-full max-w-md bg-red-500/15 border border-red-400/30 rounded-2xl px-5 py-4 text-center space-y-2" dir="rtl">
-          {user ? (
-            <>
-              <p className="text-red-300 font-semibold text-sm">הגעת למגבלת האווטארים שלך ({userDoc?.avatarSlots})</p>
-              <p className="text-white/50 text-xs">
-                קנה משבצת נוספת ב-10 מטבעות מתוך{" "}
-                <button onClick={() => navigate("/my-avatars")} className="text-brand-primary underline">
-                  השייפים שלי
-                </button>
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-red-300 font-semibold text-sm">כבר יצרת אווטאר אחד</p>
-              <p className="text-white/50 text-xs">
-                התחבר עם Google כדי ליצור עוד אווטארים ולשמור אותם{" "}
-                <button onClick={() => signIn()} className="text-brand-primary underline">
-                  התחבר
-                </button>
-              </p>
-            </>
-          )}
-        </div>
+        <Alert variant="destructive" className="w-full max-w-md" dir="rtl">
+          <AlertDescription className="flex flex-col gap-1 text-center">
+            {user ? (
+              <>
+                <span className="font-semibold">הגעת למגבלת האווטארים שלך ({userDoc?.avatarSlots})</span>
+                <span className="text-xs opacity-80">
+                  קנה משבצת נוספת ב-10 מטבעות מתוך{" "}
+                  <button onClick={() => navigate("/my-avatars")} className="underline font-semibold">
+                    השייפים שלי
+                  </button>
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="font-semibold">כבר יצרת אווטאר אחד</span>
+                <span className="text-xs opacity-80">
+                  התחבר עם Google כדי ליצור עוד אווטארים ולשמור אותם{" "}
+                  <button onClick={() => signIn()} className="underline font-semibold">
+                    התחבר
+                  </button>
+                </span>
+              </>
+            )}
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* TraitsForm is a controlled component — no preview here, preview is dev-only */}
