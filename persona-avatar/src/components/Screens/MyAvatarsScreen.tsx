@@ -64,6 +64,7 @@ export function MyAvatarsScreen() {
         {user?.photoURL && (
           <img
             src={user.photoURL}
+            referrerPolicy="no-referrer"
             alt={user.displayName ?? ""}
             className="w-16 h-16 rounded-full border-4 border-brand-primary mx-auto mb-3 object-cover"
           />

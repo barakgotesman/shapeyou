@@ -86,24 +86,26 @@ export function LandingScreen() {
       {/* ── Desktop: two-column layout ── */}
       {/* dir=ltr so flex order matches visual left/right regardless of RTL html */}
       {/* Desktop wrapper: full screen height, flex column so footer sits at the bottom */}
-      <div className="relative z-10 hidden lg:flex flex-col h-screen pt-16">
-      <div className="flex flex-1 overflow-hidden" dir="ltr">
+      <div className="relative z-10 hidden lg:flex flex-col min-h-screen pt-16">
+      <div className="flex flex-1" dir="ltr">
 
         {/* Left: 3-column vertical avatar waterfall */}
-        <div className="flex-1 flex gap-4 px-8 py-8 overflow-hidden">
+        <div className="flex-1 relative min-w-0">
+          <div className="absolute inset-0 flex gap-4 px-8 py-8 overflow-hidden">
           <AvatarColumn items={COL_A} direction="up"   duration={18} />
           <AvatarColumn items={COL_B} direction="down" duration={22} />
           <AvatarColumn items={COL_C} direction="up"   duration={20} />
+          </div>
         </div>
 
         {/* Right: hero + card */}
-        <div className="flex flex-col items-center justify-center px-8 py-4 w-[420px] shrink-0 gap-4 overflow-hidden" dir="rtl">
+        <div className="flex flex-col items-center justify-center px-6 py-6 w-[380px] xl:w-[420px] shrink-0 gap-4" dir="rtl">
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
               style={{ backgroundColor: "rgba(252,211,77,0.15)", color: "#FCD34D", border: "1px solid rgba(252,211,77,0.3)" }}>
               ✦ גלה את האישיות שלך
             </div>
-            <h1 className="text-5xl font-black text-white leading-tight tracking-tight">
+            <h1 className="text-4xl xl:text-5xl font-black text-white leading-tight tracking-tight">
               מה האישיות<br />
               <span style={{ color: "#FCD34D" }}>שלך נראית?</span>
             </h1>

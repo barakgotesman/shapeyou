@@ -7,6 +7,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [photoFailed, setPhotoFailed] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -44,9 +45,11 @@ export function Navbar() {
     await signOut();
   };
 
-  const Avatar = () => user?.photoURL ? (
+  const Avatar = () => user?.photoURL && !photoFailed ? (
     <img
       src={user.photoURL}
+      referrerPolicy="no-referrer"
+      onError={() => setPhotoFailed(true)}
       alt={user.displayName ?? "פרופיל"}
       className="w-8 h-8 rounded-full border-2 border-brand-primary object-cover"
     />
